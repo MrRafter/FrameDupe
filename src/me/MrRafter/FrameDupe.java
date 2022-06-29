@@ -40,16 +40,13 @@ public final class FrameDupe extends JavaPlugin {
     public void onEnable() {
         //Frame Dupe
         getServer().getPluginManager().registerEvents(new FrameDupeListener(), this);
-        //Lava Dupe
         getCommand("framedupe").setExecutor((CommandExecutor)new Commands(this));
         getCommand("framedupe").setTabCompleter((TabCompleter)new CommandCompleter());
-        //PlaceholderAPI
         if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")){
             usingPAPI = true;
 
         }
 
-        //bStats
         int pluginId = 10837;
         Metrics metrics = new Metrics(this, pluginId);
 
