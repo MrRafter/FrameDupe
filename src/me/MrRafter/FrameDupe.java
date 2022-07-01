@@ -57,7 +57,6 @@ public final class FrameDupe extends JavaPlugin {
     }
 
     public void registerEvents(){
-       //Bukkit.getServer().getPluginManager().registerEvents(new IgnoreChatEvent(), this);
     }
 
     public void registerCommands(){
