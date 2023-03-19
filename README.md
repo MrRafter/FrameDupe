@@ -2,3 +2,6 @@ Plugin that allows for items to be duplicated when removing them from an item fr
 
 
 Support from version 1.8.x to version 1.19.x
+
+if you build this plugin please compile with java 8 and not higher for it to work as expected
+
