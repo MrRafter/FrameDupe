@@ -92,7 +92,7 @@ public class RegularFrames implements FrameModule, Listener {
 
         if (blacklistEnabled) {
             if (blacklist.contains(frameItem.getType())) return;
-            if (blacklistCheckShulkers && ShulkerUtil.isShulkerBox(frameItem)) {
+            if (blacklistCheckShulkers && FrameDupe.serverHasShulkers && ShulkerUtil.isShulkerBox(frameItem)) {
                 for (ItemStack shulkerItem : ShulkerUtil.getContents(frameItem)) {
                     if (blacklist.contains(shulkerItem.getType())) return;
                 }
@@ -101,7 +101,7 @@ public class RegularFrames implements FrameModule, Listener {
 
         if (whitelistEnabled) {
             if (!whitelist.contains(frameItem.getType())) return;
-            if (whitelistCheckShulkers && ShulkerUtil.isShulkerBox(frameItem)) {
+            if (whitelistCheckShulkers && FrameDupe.serverHasShulkers && ShulkerUtil.isShulkerBox(frameItem)) {
                 for (ItemStack shulkerItem : ShulkerUtil.getContents(frameItem)) {
                     if (!whitelist.contains(shulkerItem.getType())) return;
                 }
