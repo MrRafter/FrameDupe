@@ -12,7 +12,6 @@ public class ShulkerUtil {
     */
     public static boolean isShulkerBox(ItemStack itemStack) {
         if (itemStack == null) return false;
-        if (!FrameDupe.serverHasShulkers) return false;
         if (!itemStack.hasItemMeta()) return false;
         if (!(itemStack.getItemMeta() instanceof BlockStateMeta)) return false;
         return ((BlockStateMeta) itemStack.getItemMeta()).getBlockState() instanceof ShulkerBox;
