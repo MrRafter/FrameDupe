@@ -1,8 +1,26 @@
 name: FrameDupe
-version: 1.6
-main: me.MrRafter.FrameDupe
-author: MrRafter
-description: FrameDupe For All Versions Of Minecraft
+version: '${project.version}'
+description: '${project.description}'
+website: '${project.url}'
+main: me.MrRafter.framedupe.FrameDupe
+authors: [ MrRafter, xGinko ]
+folia-supported: true
+
 commands:
   framedupe:
-    aliases: [fd]
+    permission: framedupe.cmd.*
+    description: Admin commands
+    usage: /framedupe [ reload, version ]
+    aliases:
+      - fd
+
+permissions:
+  framedupe.cmd.*:
+    description: Command permissions
+    children:
+      framedupe.cmd.reload: true
+      framedupe.cmd.version: true
+  framedupe.cmd.reload:
+    description: Reload the plugin
+  framedupe.cmd.version:
+    description: Show the plugin version
