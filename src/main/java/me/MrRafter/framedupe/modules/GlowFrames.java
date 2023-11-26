@@ -38,7 +38,7 @@ public class GlowFrames implements FrameModule, Listener {
         try { this.glowItemFrame = EntityType.valueOf("GLOW_ITEM_FRAME"); } catch (IllegalArgumentException ignored) {}
         FrameConfig config = FrameDupe.getConfiguration();
         this.probability = config.getDouble("GLOW_FrameDupe.Probability-percentage", 50.0,
-                "Value has to be greater than 0. Recommended to not set to 100% unless you want players to flood the server with items.");
+                "Value has to be greater than 0. Recommended to not set to 100% unless you want players to flood the server with items.") / 100;
         if (probability <= 0)
             FrameDupe.getPrefixedLogger().warning("Probability percentage needs to be a value greater than 0. Glow frame dupe will not enable.");
         this.blacklistEnabled = config.getBoolean("GLOW_FrameDupe.Blacklist.Enabled", false,

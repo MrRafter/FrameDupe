@@ -34,7 +34,7 @@ public class RegularFrames implements FrameModule, Listener {
         this.scheduler = isFolia ? foliaLib.getImpl() : null;
         FrameConfig config = FrameDupe.getConfiguration();
         this.probability = config.getDouble("FrameDupe.Probability-percentage", 50.0,
-                "Value has to be greater than 0. Recommended to not set to 100% unless you want players to flood the server with items.");
+                "Value has to be greater than 0. Recommended to not set to 100% unless you want players to flood the server with items.") / 100;
         if (probability <= 0)
             FrameDupe.getPrefixedLogger().warning("Probability percentage needs to be a value greater than 0. Regular frame dupe will not enable.");
         this.blacklistEnabled = config.getBoolean("FrameDupe.Blacklist.Enabled", false,
