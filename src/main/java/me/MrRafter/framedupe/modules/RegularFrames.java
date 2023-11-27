@@ -4,7 +4,8 @@ import com.tcoded.folialib.FoliaLib;
 import com.tcoded.folialib.impl.ServerImplementation;
 import me.MrRafter.framedupe.FrameConfig;
 import me.MrRafter.framedupe.FrameDupe;
-import me.MrRafter.framedupe.utils.ItemUtil;
+import me.MrRafter.framedupe.utils.BundleUtil;
+import me.MrRafter.framedupe.utils.ShulkerUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -115,13 +116,13 @@ public class RegularFrames implements FrameModule, Listener {
 
         if (blacklistEnabled) {
             if (blacklist.contains(frameItem.getType())) return;
-            if (blacklistCheckShulkers && ItemUtil.isNonEmptyShulker(frameItem)) {
-                for (ItemStack shulkerItem : ItemUtil.getShulkerInventory(frameItem)) {
+            if (blacklistCheckShulkers && ShulkerUtil.isNonEmptyShulker(frameItem)) {
+                for (ItemStack shulkerItem : ShulkerUtil.getShulkerInventory(frameItem)) {
                     if (blacklist.contains(shulkerItem.getType())) return;
                 }
             }
-            if (blacklistCheckBundles && ItemUtil.isNonEmptyBundle(frameItem)) {
-                for (ItemStack bundleItem : ItemUtil.getBundleItems(frameItem)) {
+            if (blacklistCheckBundles && BundleUtil.isNonEmptyBundle(frameItem)) {
+                for (ItemStack bundleItem : BundleUtil.getBundleItems(frameItem)) {
                     if (blacklist.contains(bundleItem.getType())) return;
                 }
             }
@@ -129,13 +130,13 @@ public class RegularFrames implements FrameModule, Listener {
 
         if (whitelistEnabled) {
             if (!whitelist.contains(frameItem.getType())) return;
-            if (whitelistCheckShulkers && ItemUtil.isNonEmptyShulker(frameItem)) {
-                for (ItemStack shulkerItem : ItemUtil.getShulkerInventory(frameItem)) {
+            if (whitelistCheckShulkers && ShulkerUtil.isNonEmptyShulker(frameItem)) {
+                for (ItemStack shulkerItem : ShulkerUtil.getShulkerInventory(frameItem)) {
                     if (!whitelist.contains(shulkerItem.getType())) return;
                 }
             }
-            if (whitelistCheckBundles && ItemUtil.isNonEmptyBundle(frameItem)) {
-                for (ItemStack bundleItem : ItemUtil.getBundleItems(frameItem)) {
+            if (whitelistCheckBundles && BundleUtil.isNonEmptyBundle(frameItem)) {
+                for (ItemStack bundleItem : BundleUtil.getBundleItems(frameItem)) {
                     if (!whitelist.contains(bundleItem.getType())) return;
                 }
             }
