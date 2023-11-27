@@ -20,7 +20,7 @@ public class ShulkerUtil {
 
     /*
     * Only save to use if called once it has been confirmed that the passed ItemStack is indeed a ShulkerBox.
-    * */
+    */
     public static Inventory getShulkerInventory(ItemStack shulkerItem) {
         return ((ShulkerBox) ((BlockStateMeta) shulkerItem.getItemMeta()).getBlockState()).getInventory();
     }

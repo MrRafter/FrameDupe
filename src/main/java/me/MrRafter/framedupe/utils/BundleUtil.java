@@ -16,10 +16,12 @@ public class BundleUtil {
         if (!itemStack.getType().equals(Material.BUNDLE)) return false;
         if (!itemStack.hasItemMeta()) return false;
         return ((BundleMeta) itemStack.getItemMeta()).hasItems();
-    }/*
-     * Only save to use if called once it has been confirmed that the passed ItemStack is indeed a bundle.
-     * */
+    }
 
+    /*
+     * Only save to use if called once it has been confirmed that the passed ItemStack is indeed a bundle.
+     *
+     */
     public static List<ItemStack> getBundleItems(ItemStack itemStack) {
         return ((BundleMeta) itemStack.getItemMeta()).getItems();
     }
