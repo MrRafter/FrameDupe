@@ -1,6 +1,7 @@
 package me.MrRafter.framedupe;
 
 import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
+import io.github.thatsmusic99.configurationmaster.api.Title;
 
 import java.io.File;
 import java.util.List;
@@ -11,7 +12,16 @@ public class FrameConfig {
 
     protected FrameConfig() throws Exception {
         this.config = loadConfig(new File(FrameDupe.getInstance().getDataFolder(), "config.yml"));
-        config.addComment("Frame dupe from 1.7.x to last update of minecraft\n" + "made by mrrafter_ on discord");
+        config.setTitle(new Title()
+                .withPadding(true)
+                .addSolidLine()
+                .addLine(" ")
+                .addLine("Frame Dupe", Title.Pos.CENTER)
+                .addLine("Compatible with all server versions that have item frames in the game.", Title.Pos.CENTER)
+                .addLine("made by mrrafter_ and rewritten by xginko on discord.", Title.Pos.CENTER)
+                .addLine(" ")
+                .addSolidLine()
+        );
     }
 
     private ConfigFile loadConfig(File ymlFile) throws Exception {

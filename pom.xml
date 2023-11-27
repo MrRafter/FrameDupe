@@ -41,11 +41,14 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <minimizeJar>true</minimizeJar>
                             <relocations>
                                 <relocation>
+                                    <pattern>org.bstats</pattern>
+                                    <shadedPattern>me.MrRafter.framedupe.bStats</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>com.tcoded.folialib</pattern>
-                                    <shadedPattern>me.xginko.snowballfight.folialib</shadedPattern>
+                                    <shadedPattern>me.MrRafter.framedupe.folialib</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>

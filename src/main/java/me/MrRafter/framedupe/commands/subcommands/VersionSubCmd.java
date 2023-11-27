@@ -29,8 +29,8 @@ public class VersionSubCmd extends SubCommand {
             sender.sendMessage("\n");
             sender.sendMessage(
                     ChatColor.GOLD+pluginyml.getName()+" "+pluginyml.getVersion()+
-                            ChatColor.GRAY+" by "+ChatColor.DARK_AQUA+pluginyml.getAuthors().get(0)+
-                            " and "+ChatColor.DARK_AQUA+pluginyml.getAuthors().get(1)
+                    ChatColor.GRAY+" by "+ChatColor.DARK_AQUA+pluginyml.getAuthors().get(0)+
+                    ChatColor.GRAY+" & "+ChatColor.DARK_AQUA+pluginyml.getAuthors().get(1)
             );
             sender.sendMessage("\n");
         } else {

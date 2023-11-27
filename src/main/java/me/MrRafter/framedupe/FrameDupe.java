@@ -1,6 +1,7 @@
 package me.MrRafter.framedupe;
 
 import com.tcoded.folialib.FoliaLib;
+import me.MrRafter.framedupe.commands.FrameDupeCommand;
 import me.MrRafter.framedupe.modules.FrameModule;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -12,48 +13,26 @@ public final class FrameDupe extends JavaPlugin {
     private static FrameDupe instance;
     private static FrameConfig config;
     private static Logger logger;
-    public static boolean serverHasGlowItemFrames, serverHasShulkers;
 
     public void onEnable() {
-        instance = this;
-        logger = getLogger();
-        new Metrics(this, 17434);
-
-        // Compatibility checks
+        // Check if plugin can be enabled in the first place
         try {
             Class.forName("org.bukkit.entity.ItemFrame");
         } catch (ClassNotFoundException e) {
-            logger.severe("Your server version does not have item frames. Plugin cant enable.");
+            logger.severe("Your server version does not have item frames. Plugin cannot enable.");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        try {
-            Class.forName("org.bukkit.entity.GlowItemFrame");
-            serverHasGlowItemFrames = true;
-        } catch (ClassNotFoundException e) {
-            serverHasGlowItemFrames = false;
-        }
-        try {
-            Class.forName("org.bukkit.block.ShulkerBox");
-            serverHasShulkers = true;
-        } catch (ClassNotFoundException e) {
-            serverHasShulkers = false;
-        }
-
+        // Enable
+        instance = this;
+        logger = getLogger();
         logger.info("Loading config");
         reloadPlugin();
+        logger.info("Registering commands");
+        getCommand("framedupe").setExecutor(new FrameDupeCommand());
+        logger.info("Loading Metrics");
+        new Metrics(this, 17434);
         logger.info("Done.");
-    }
-
-    public void reloadPlugin() {
-        try {
-            config = new FrameConfig();
-            FrameModule.reloadModules();
-            config.saveConfig();
-        } catch (Exception e) {
-            logger.severe("Error loading config! - " + e.getLocalizedMessage());
-            e.printStackTrace();
-        }
     }
 
     public static FrameDupe getInstance() {
@@ -67,5 +46,43 @@ public final class FrameDupe extends JavaPlugin {
     }
     public static Logger getPrefixedLogger() {
         return logger;
+    }
+
+    public void reloadPlugin() {
+        try {
+            config = new FrameConfig();
+            FrameModule.reloadModules();
+            config.saveConfig();
+        } catch (Exception e) {
+            logger.severe("Error loading config! - " + e.getLocalizedMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean serverHasShulkers() {
+        try {
+            Class.forName("org.bukkit.block.ShulkerBox");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    public static boolean serverHasGlowItemFrames() {
+        try {
+            Class.forName("org.bukkit.entity.GlowItemFrame");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    public static boolean serverHasBundles() {
+        try {
+            Class.forName("org.bukkit.inventory.meta.BundleMeta");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 }
