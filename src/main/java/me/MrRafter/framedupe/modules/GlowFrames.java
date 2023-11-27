@@ -105,7 +105,7 @@ public class GlowFrames implements FrameModule, Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onFrameBreak(HangingBreakEvent event) {
         final Hanging hanging = event.getEntity();
-        if (!hanging.getType().equals(EntityType.ITEM_FRAME)) return;
+        if (!hanging.getType().equals(GLOW_ITEM_FRAME)) return;
         if (probability >= 100 || new Random().nextDouble() <= probability) {
             performFrameDupe(((ItemFrame) hanging));
         }
