@@ -94,7 +94,7 @@ public class RegularFrames implements FrameModule, Listener {
     private void onFramePunch(EntityDamageByEntityEvent event) {
         final Entity punched = event.getEntity();
         if (!punched.getType().equals(EntityType.ITEM_FRAME)) return;
-        if (probability < 100 && new Random().nextDouble() > probability) {
+        if (probability >= 100 || new Random().nextDouble() <= probability) {
             performFrameDupe(((ItemFrame) punched));
         }
     }
@@ -103,7 +103,7 @@ public class RegularFrames implements FrameModule, Listener {
     private void onFrameBreak(HangingBreakEvent event) {
         final Hanging hanging = event.getEntity();
         if (!hanging.getType().equals(EntityType.ITEM_FRAME)) return;
-        if (probability < 100 && new Random().nextDouble() > probability) {
+        if (probability >= 100 || new Random().nextDouble() <= probability) {
             performFrameDupe(((ItemFrame) hanging));
         }
     }
