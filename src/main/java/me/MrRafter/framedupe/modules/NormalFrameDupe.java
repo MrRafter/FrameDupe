@@ -144,7 +144,7 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
 
         if (cooldownEnabled) {
             final UUID duper = event.getDamager().getUniqueId();
-            if (this.dupersOnCooldown.getIfPresent(duper) != null) return;
+            if (dupersOnCooldown.getIfPresent(duper) != null) return;
             else dupersOnCooldown.put(duper, true);
         }
 
