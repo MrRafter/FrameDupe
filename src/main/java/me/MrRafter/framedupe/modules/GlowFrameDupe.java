@@ -45,11 +45,11 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
                 "Enable duping with glow item frames. (Will only enable if your game version has them)");
         this.probability = config.getDouble("GLOW_FrameDupe.Probability-Percentage", 50.0,
                 "50.0 = 50%. Has to be greater than 0.") / 100;
+        if (probability <= 0) FrameDupe.getPrefixedLogger().warning("Probability percentage is 0 or lower. Not enabling glow frame dupe.");
         this.cooldownEnabled = config.getBoolean("GLOW_FrameDupe.Cooldown.Enabled", true);
-        final long cooldownMillis = config.getInt("GLOW_FrameDupe.Cooldown.Ticks", 15, "1 sec = 20 ticks") * 50L;
+        final long cooldownMillis = config.getInt("GLOW_FrameDupe.Cooldown.Ticks", 15,
+                "1 sec = 20 ticks") * 50L;
         this.dupersOnCooldown = cooldownEnabled ? Caffeine.newBuilder().expireAfterWrite(Duration.ofMillis(cooldownMillis)).build() : null;
-        if (probability <= 0)
-            FrameDupe.getPrefixedLogger().warning("Probability percentage is 0 or lower. Not enabling glow frame dupe.");
         this.blacklistEnabled = config.getBoolean("GLOW_FrameDupe.Blacklist.Enabled", false);
         this.blacklistCheckShulkers = config.getBoolean("GLOW_FrameDupe.Blacklist.Check-Shulkers", true) && FrameDupe.serverHasShulkers();
         this.blacklistCheckBundles = config.getBoolean("GLOW_FrameDupe.Blacklist.Check-Bundles", true) && FrameDupe.serverHasBundles();

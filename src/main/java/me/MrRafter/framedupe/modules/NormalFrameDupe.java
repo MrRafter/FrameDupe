@@ -43,12 +43,12 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
         this.probability = config.getDouble("FrameDupe.Probability-Percentage", 50.0,
                 "50.0 = 50%. Has to be greater than 0. Recommended not to set to 100% unless\n" +
                         "you are okay with players gaining items very quickly (May also increase lag for low spec clients).") / 100;
+        if (probability <= 0) FrameDupe.getPrefixedLogger().warning("Probability percentage is 0 or lower. Not enabling frame dupe.");
         this.cooldownEnabled = config.getBoolean("FrameDupe.Cooldown.Enabled", true,
                 "Prevent abuse by players using automation mods.");
-        final long cooldownMillis = config.getInt("FrameDupe.Cooldown.Ticks", 15, "1 sec = 20 ticks") * 50L;
+        final long cooldownMillis = config.getInt("FrameDupe.Cooldown.Ticks", 15,
+                "1 sec = 20 ticks") * 50L;
         this.dupersOnCooldown = cooldownEnabled ? Caffeine.newBuilder().expireAfterWrite(Duration.ofMillis(cooldownMillis)).build() : null;
-        if (probability <= 0)
-            FrameDupe.getPrefixedLogger().warning("Probability percentage is 0 or lower. Not enabling frame dupe.");
         this.blacklistEnabled = config.getBoolean("FrameDupe.Blacklist.Enabled", false,
                 "If enabled, all items in this list will not be duplicated.");
         this.blacklistCheckShulkers = config.getBoolean("FrameDupe.Blacklist.Check-Shulkers", true,
