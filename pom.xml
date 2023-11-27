@@ -50,6 +50,10 @@
                                     <pattern>com.tcoded.folialib</pattern>
                                     <shadedPattern>me.MrRafter.framedupe.folialib</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>com.github.benmanes.caffeine</pattern>
+                                    <shadedPattern>me.MrRafter.framedupe.caffeine</shadedPattern>
+                                </relocation>
                             </relocations>
                             <filters>
                                 <filter>
@@ -104,6 +108,12 @@
             <groupId>com.tcoded</groupId>
             <artifactId>FoliaLib</artifactId>
             <version>0.3.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>3.1.8</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
