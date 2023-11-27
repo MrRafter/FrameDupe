@@ -106,6 +106,12 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
         // Don't do anything if the frame has no item inside
         if (frameItem == null || frameItem.getType().equals(Material.AIR)) return;
 
+        if (cooldownEnabled && event.getDamager() != null) {
+            final UUID duper = event.getDamager().getUniqueId();
+            if (dupersOnCooldown.getIfPresent(duper) != null) return;
+            else dupersOnCooldown.put(duper, true);
+        }
+
         if (blacklistEnabled) {
             if (blacklist.contains(frameItem.getType())) return;
             if (blacklistCheckShulkers && ShulkerUtil.isNonEmptyShulker(frameItem)) {
@@ -132,12 +138,6 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
                     if (bundleItem != null && !whitelist.contains(bundleItem.getType())) return;
                 }
             }
-        }
-
-        if (cooldownEnabled && event.getDamager() != null) {
-            final UUID duper = event.getDamager().getUniqueId();
-            if (dupersOnCooldown.getIfPresent(duper) != null) return;
-            else dupersOnCooldown.put(duper, true);
         }
 
         if (!isFolia) {
