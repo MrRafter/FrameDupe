@@ -34,7 +34,7 @@ public class GlowFrames implements FrameModule, Listener {
     private EntityType GLOW_ITEM_FRAME;
     private final double probability;
     private final boolean isFolia, blacklistEnabled, blacklistCheckShulkers, blacklistCheckBundles,
-            whitelistEnabled, whitelistCheckShulkers, whitelistCheckBundles;
+            whitelistEnabled, whitelistCheckShulkers, whitelistCheckBundles, cooldownEnabled;
 
     public GlowFrames() {
         shouldEnable(); // make enable option appear on top
@@ -43,11 +43,12 @@ public class GlowFrames implements FrameModule, Listener {
         this.scheduler = isFolia ? foliaLib.getImpl() : null;
         try { this.GLOW_ITEM_FRAME = EntityType.valueOf("GLOW_ITEM_FRAME"); } catch (IllegalArgumentException ignored) {}
         FrameConfig config = FrameDupe.getConfiguration();
-        this.dupersOnCooldown = Caffeine.newBuilder()
+        this.cooldownEnabled = config.getBoolean("GLOW_FrameDupe.Cooldown.Enabled", true);
+        this.dupersOnCooldown = cooldownEnabled ? Caffeine.newBuilder()
                 .expireAfterWrite(Duration.ofMillis(
-                        config.getInt("GLOW_FrameDupe.Cooldown-Ticks", 10,
+                        config.getInt("GLOW_FrameDupe.Cooldown.Ticks", 10,
                                 "Prevents abuse by players using cheats. 1 sec = 20 ticks.") * 50L))
-                .build();
+                .build() : null;
         this.probability = config.getDouble("GLOW_FrameDupe.Probability-Percentage", 50.0,
                 "Value has to be greater than 0. Recommended not to set to 100% unless\n" +
                         "you are okay with players flooding the server with items.") / 100;
@@ -142,10 +143,11 @@ public class GlowFrames implements FrameModule, Listener {
             }
         }
 
-        // Cooldown to slow down cheaters
-        final UUID duper  = event.getDamager().getUniqueId();
-        if (this.dupersOnCooldown.getIfPresent(duper) != null) return;
-        else dupersOnCooldown.put(duper, true);
+        if (cooldownEnabled) {
+            final UUID duper = event.getDamager().getUniqueId();
+            if (this.dupersOnCooldown.getIfPresent(duper) != null) return;
+            else dupersOnCooldown.put(duper, true);
+        }
 
         if (!isFolia) {
             itemFrame.getWorld().dropItemNaturally(itemFrame.getLocation(), frameItem.clone());
