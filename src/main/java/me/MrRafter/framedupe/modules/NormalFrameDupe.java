@@ -20,45 +20,46 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
-public class RegularFrames implements FrameModule, Listener {
+public class NormalFrameDupe implements FrameDupeModule, Listener {
 
     private final ServerImplementation scheduler;
     private final Cache<UUID, Boolean> dupersOnCooldown;
-    private final HashSet<Material> blacklist = new HashSet<>();
-    private final HashSet<Material> whitelist = new HashSet<>();
+    private final HashSet<Material> blacklist;
+    private final HashSet<Material> whitelist;
     private final double probability;
     private final boolean isFolia, blacklistEnabled, blacklistCheckShulkers, blacklistCheckBundles,
             whitelistEnabled, whitelistCheckShulkers, whitelistCheckBundles, cooldownEnabled;
 
-    public RegularFrames() {
+    protected NormalFrameDupe() {
         shouldEnable(); // make enable option appear on top
-        FoliaLib foliaLib = FrameDupe.getFoliaLib();
+        final FoliaLib foliaLib = FrameDupe.getFoliaLib();
         this.isFolia = foliaLib.isFolia();
         this.scheduler = isFolia ? foliaLib.getImpl() : null;
         FrameConfig config = FrameDupe.getConfiguration();
-        this.cooldownEnabled = config.getBoolean("FrameDupe.Cooldown.Enabled", true);
-        this.dupersOnCooldown = cooldownEnabled ? Caffeine.newBuilder()
-                .expireAfterWrite(Duration.ofMillis(
-                        config.getInt("FrameDupe.Cooldown.Ticks", 10,
-                                "Prevents abuse by players using cheats. 1 sec = 20 ticks.") * 50L))
-                .build() : null;
+        config.master().addSection("FrameDupe", "Item Frame Dupe");
+        config.master().addComment("FrameDupe.Enabled", "Enable duping by removing items from normal item frames.");
         this.probability = config.getDouble("FrameDupe.Probability-Percentage", 50.0,
-                "Value has to be greater than 0. Recommended not to set to 100% unless\n" +
-                        "you are okay with players flooding the server with items.") / 100;
+                "50.0 = 50%. Has to be greater than 0. Recommended not to set to 100% unless\n" +
+                        "you are okay with players gaining items very quickly (May also increase lag for low spec clients).") / 100;
+        this.cooldownEnabled = config.getBoolean("FrameDupe.Cooldown.Enabled", true,
+                "Prevent abuse by players using automation mods.");
+        this.dupersOnCooldown = cooldownEnabled ? Caffeine.newBuilder()
+                .expireAfterWrite(Duration.ofMillis(config.getInt("FrameDupe.Cooldown.Ticks", 15, "1 sec = 20 ticks") * 50L))
+                .build() : null;
         if (probability <= 0)
-            FrameDupe.getPrefixedLogger().warning("Probability percentage needs to be a value greater than 0. Regular frame dupe will not enable.");
+            FrameDupe.getPrefixedLogger().warning("Probability percentage is 0 or lower. Not enabling frame dupe.");
         this.blacklistEnabled = config.getBoolean("FrameDupe.Blacklist.Enabled", false,
                 "If enabled, all items in this list will not be duplicated.");
-        this.blacklistCheckShulkers = config.getBoolean("FrameDupe.Blacklist.Check-Shulkers", FrameDupe.serverHasShulkers(),
+        this.blacklistCheckShulkers = config.getBoolean("FrameDupe.Blacklist.Check-Shulkers", true,
                 "Whether to check inside shulkers for blacklisted items.") && FrameDupe.serverHasShulkers();
-        this.blacklistCheckBundles = config.getBoolean("FrameDupe.Blacklist.Check-Bundles", FrameDupe.serverHasBundles(),
+        this.blacklistCheckBundles = config.getBoolean("FrameDupe.Blacklist.Check-Bundles", true,
                 "Whether to check inside bundles for blacklisted items.") && FrameDupe.serverHasBundles();
-        config.getList("FrameDupe.Blacklist.Items", Collections.singletonList("DRAGON_EGG")).forEach(configuredItem -> {
+        final List<String> configuredBlacklist = config.getList("FrameDupe.Blacklist.Items", Collections.singletonList("DRAGON_EGG"),
+                "Please use correct Spigot Material values for your minecraft version.");
+        this.blacklist = new HashSet<>(configuredBlacklist.size());
+        configuredBlacklist.forEach(configuredItem -> {
             try {
                 Material material = Material.valueOf(configuredItem);
                 this.blacklist.add(material);
@@ -69,11 +70,13 @@ public class RegularFrames implements FrameModule, Listener {
         });
         this.whitelistEnabled = config.getBoolean("FrameDupe.Whitelist.Enabled", false,
                 "If enabled, only items in this list can be duped.");
-        this.whitelistCheckShulkers = config.getBoolean("FrameDupe.Whitelist.Check-Shulkers", FrameDupe.serverHasShulkers(),
+        this.whitelistCheckShulkers = config.getBoolean("FrameDupe.Whitelist.Check-Shulkers", true,
                 "Whether to check inside shulkers for whitelisted items.") && FrameDupe.serverHasShulkers();
-        this.whitelistCheckBundles = config.getBoolean("FrameDupe.Whitelist.Check-Bundles", FrameDupe.serverHasBundles(),
+        this.whitelistCheckBundles = config.getBoolean("FrameDupe.Whitelist.Check-Bundles", true,
                 "Whether to check inside bundles for whitelisted items.") && FrameDupe.serverHasBundles();
-        config.getList("FrameDupe.Whitelist.Items", Collections.singletonList("DIAMOND")).forEach(configuredItem -> {
+        final List<String> configuredWhitelist = config.getList("FrameDupe.Whitelist.Items", Collections.singletonList("DIAMOND"));
+        this.whitelist = new HashSet<>(configuredWhitelist.size());
+        configuredWhitelist.forEach(configuredItem -> {
             try {
                 Material material = Material.valueOf(configuredItem);
                 this.whitelist.add(material);

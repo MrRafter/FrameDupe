@@ -3,20 +3,20 @@ package me.MrRafter.framedupe.modules;
 
 import java.util.HashSet;
 
-public interface FrameModule {
+public interface FrameDupeModule {
 
     boolean shouldEnable();
     void enable();
     void disable();
 
-    HashSet<FrameModule> modules = new HashSet<>();
+    HashSet<FrameDupeModule> modules = new HashSet<>();
 
     static void reloadModules() {
-        modules.forEach(FrameModule::disable);
+        modules.forEach(FrameDupeModule::disable);
         modules.clear();
 
-        modules.add(new RegularFrames());
-        modules.add(new GlowFrames());
+        modules.add(new NormalFrameDupe());
+        modules.add(new GlowFrameDupe());
 
         modules.forEach(module -> {
             if (module.shouldEnable()) module.enable();

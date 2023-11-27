@@ -2,7 +2,7 @@ package me.MrRafter.framedupe;
 
 import com.tcoded.folialib.FoliaLib;
 import me.MrRafter.framedupe.commands.FrameDupeCommand;
-import me.MrRafter.framedupe.modules.FrameModule;
+import me.MrRafter.framedupe.modules.FrameDupeModule;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -51,7 +51,7 @@ public final class FrameDupe extends JavaPlugin {
     public void reloadPlugin() {
         try {
             config = new FrameConfig();
-            FrameModule.reloadModules();
+            FrameDupeModule.reloadModules();
             config.saveConfig();
         } catch (Exception e) {
             logger.severe("Error loading config! - " + e.getLocalizedMessage());
