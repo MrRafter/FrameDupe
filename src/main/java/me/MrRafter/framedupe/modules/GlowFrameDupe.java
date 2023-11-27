@@ -104,7 +104,6 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
         if (probability < 100 && new Random().nextDouble() > probability) return;
 
         final ItemFrame itemFrame = (ItemFrame) punched;
-
         final ItemStack frameItem = itemFrame.getItem();
         // Don't do anything if the frame has no item inside
         if (frameItem == null || frameItem.getType().equals(Material.AIR)) return;
