@@ -112,12 +112,12 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
             if (blacklist.contains(frameItem.getType())) return;
             if (blacklistCheckShulkers && ShulkerUtil.isNonEmptyShulker(frameItem)) {
                 for (ItemStack shulkerItem : ShulkerUtil.getShulkerInventory(frameItem)) {
-                    if (blacklist.contains(shulkerItem.getType())) return;
+                    if (shulkerItem != null && blacklist.contains(shulkerItem.getType())) return;
                 }
             }
             if (blacklistCheckBundles && BundleUtil.isNonEmptyBundle(frameItem)) {
                 for (ItemStack bundleItem : BundleUtil.getBundleItems(frameItem)) {
-                    if (blacklist.contains(bundleItem.getType())) return;
+                    if (bundleItem != null && blacklist.contains(bundleItem.getType())) return;
                 }
             }
         }
@@ -126,17 +126,17 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
             if (!whitelist.contains(frameItem.getType())) return;
             if (whitelistCheckShulkers && ShulkerUtil.isNonEmptyShulker(frameItem)) {
                 for (ItemStack shulkerItem : ShulkerUtil.getShulkerInventory(frameItem)) {
-                    if (!whitelist.contains(shulkerItem.getType())) return;
+                    if (shulkerItem != null && !whitelist.contains(shulkerItem.getType())) return;
                 }
             }
             if (whitelistCheckBundles && BundleUtil.isNonEmptyBundle(frameItem)) {
                 for (ItemStack bundleItem : BundleUtil.getBundleItems(frameItem)) {
-                    if (!whitelist.contains(bundleItem.getType())) return;
+                    if (bundleItem != null && !whitelist.contains(bundleItem.getType())) return;
                 }
             }
         }
 
-        if (cooldownEnabled) {
+        if (cooldownEnabled && event.getDamager() != null) {
             final UUID duper = event.getDamager().getUniqueId();
             if (dupersOnCooldown.getIfPresent(duper) != null) return;
             else dupersOnCooldown.put(duper, true);
