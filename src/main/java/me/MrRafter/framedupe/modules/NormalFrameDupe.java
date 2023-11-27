@@ -45,9 +45,8 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
                         "you are okay with players gaining items very quickly (May also increase lag for low spec clients).") / 100;
         this.cooldownEnabled = config.getBoolean("FrameDupe.Cooldown.Enabled", true,
                 "Prevent abuse by players using automation mods.");
-        this.dupersOnCooldown = cooldownEnabled ? Caffeine.newBuilder()
-                .expireAfterWrite(Duration.ofMillis(config.getInt("FrameDupe.Cooldown.Ticks", 15, "1 sec = 20 ticks") * 50L))
-                .build() : null;
+        final long cooldownMillis = config.getInt("FrameDupe.Cooldown.Ticks", 15, "1 sec = 20 ticks") * 50L;
+        this.dupersOnCooldown = cooldownEnabled ? Caffeine.newBuilder().expireAfterWrite(Duration.ofMillis(cooldownMillis)).build() : null;
         if (probability <= 0)
             FrameDupe.getPrefixedLogger().warning("Probability percentage is 0 or lower. Not enabling frame dupe.");
         this.blacklistEnabled = config.getBoolean("FrameDupe.Blacklist.Enabled", false,

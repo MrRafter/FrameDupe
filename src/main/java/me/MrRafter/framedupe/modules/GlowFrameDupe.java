@@ -46,9 +46,8 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
         this.probability = config.getDouble("GLOW_FrameDupe.Probability-Percentage", 50.0,
                 "50.0 = 50%. Has to be greater than 0.") / 100;
         this.cooldownEnabled = config.getBoolean("GLOW_FrameDupe.Cooldown.Enabled", true);
-        this.dupersOnCooldown = cooldownEnabled ? Caffeine.newBuilder()
-                .expireAfterWrite(Duration.ofMillis(config.getInt("GLOW_FrameDupe.Cooldown.Ticks", 15, "1 sec = 20 ticks") * 50L))
-                .build() : null;
+        final long cooldownMillis = config.getInt("GLOW_FrameDupe.Cooldown.Ticks", 15, "1 sec = 20 ticks") * 50L;
+        this.dupersOnCooldown = cooldownEnabled ? Caffeine.newBuilder().expireAfterWrite(Duration.ofMillis(cooldownMillis)).build() : null;
         if (probability <= 0)
             FrameDupe.getPrefixedLogger().warning("Probability percentage is 0 or lower. Not enabling glow frame dupe.");
         this.blacklistEnabled = config.getBoolean("GLOW_FrameDupe.Blacklist.Enabled", false);
