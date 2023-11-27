@@ -26,8 +26,7 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
 
     private final ServerImplementation scheduler;
     private final Cache<UUID, Boolean> dupersOnCooldown;
-    private final HashSet<Material> blacklist;
-    private final HashSet<Material> whitelist;
+    private final Set<Material> blacklist, whitelist;
     private final double probability;
     private final boolean isFolia, blacklistEnabled, blacklistCheckShulkers, blacklistCheckBundles,
             whitelistEnabled, whitelistCheckShulkers, whitelistCheckBundles, cooldownEnabled;
