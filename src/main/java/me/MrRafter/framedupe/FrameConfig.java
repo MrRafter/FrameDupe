@@ -12,11 +12,12 @@ public class FrameConfig {
 
     protected FrameConfig() throws Exception {
         this.config = loadConfig(new File(FrameDupe.getInstance().getDataFolder(), "config.yml"));
-        config.setTitle(new Title()
+        this.config.setTitle(new Title()
                 .withPadding(true)
                 .addSolidLine()
                 .addLine(" ")
                 .addLine("Frame Dupe", Title.Pos.CENTER)
+                .addLine(" ")
                 .addLine("Compatible with all server versions that have item frames in the game.", Title.Pos.CENTER)
                 .addLine("made by mrrafter_ and rewritten by xginko on discord.", Title.Pos.CENTER)
                 .addLine(" ")
