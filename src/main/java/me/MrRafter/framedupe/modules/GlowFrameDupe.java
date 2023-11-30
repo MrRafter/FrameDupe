@@ -112,10 +112,9 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
         // Don't do anything if the frame has no item inside
         if (frameItem == null || frameItem.getType().equals(Material.AIR)) return;
 
-        if (cooldownEnabled) {
+        if (cooldownEnabled && !damager.hasPermission(Permissions.BYPASS_COOLDOWN.get())) {
             final UUID duper = event.getDamager().getUniqueId();
-            if (dupersOnCooldown.getIfPresent(duper) != null
-                    && !damager.hasPermission(Permissions.BYPASS_COOLDOWN.get())) return;
+            if (dupersOnCooldown.getIfPresent(duper) != null) return;
             else dupersOnCooldown.put(duper, true);
         }
 
