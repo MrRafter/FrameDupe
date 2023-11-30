@@ -8,6 +8,7 @@ import me.MrRafter.framedupe.FrameConfig;
 import me.MrRafter.framedupe.FrameDupe;
 import me.MrRafter.framedupe.utils.BundleUtil;
 import me.MrRafter.framedupe.utils.ShulkerUtil;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -114,7 +115,7 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
 
         if (blacklistEnabled) {
             if (blacklist.contains(frameItem.getType())) return;
-            if (blacklistCheckShulkers && ShulkerUtil.isNonEmptyShulker(frameItem)) {
+            if (blacklistCheckShulkers && ShulkerUtil.isShulker(frameItem)) {
                 for (ItemStack shulkerItem : ShulkerUtil.getShulkerInventory(frameItem)) {
                     if (shulkerItem != null && blacklist.contains(shulkerItem.getType())) return;
                 }
@@ -128,7 +129,7 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
 
         if (whitelistEnabled) {
             if (!whitelist.contains(frameItem.getType())) return;
-            if (whitelistCheckShulkers && ShulkerUtil.isNonEmptyShulker(frameItem)) {
+            if (whitelistCheckShulkers && ShulkerUtil.isShulker(frameItem)) {
                 for (ItemStack shulkerItem : ShulkerUtil.getShulkerInventory(frameItem)) {
                     if (shulkerItem != null && !whitelist.contains(shulkerItem.getType())) return;
                 }
@@ -140,11 +141,16 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
             }
         }
 
+        Location dropLoc = itemFrame.getLocation().getBlock().getRelative(itemFrame.getFacing()).getLocation().clone();
+        dropLoc.setX(dropLoc.getX()+0.5);
+        dropLoc.setY(dropLoc.getY()-0.5);
+        dropLoc.setZ(dropLoc.getZ()+0.5);
+
         if (!isFolia) {
-            itemFrame.getWorld().dropItemNaturally(itemFrame.getLocation(), frameItem.clone());
+            itemFrame.getWorld().dropItemNaturally(dropLoc, frameItem.clone()).setPickupDelay(0);
         } else {
             scheduler.runAtEntity(itemFrame,
-                    dropAdditional -> itemFrame.getWorld().dropItemNaturally(itemFrame.getLocation(), frameItem.clone()));
+                    dropAdditional -> itemFrame.getWorld().dropItemNaturally(dropLoc, frameItem.clone()).setPickupDelay(0));
         }
     }
 }
