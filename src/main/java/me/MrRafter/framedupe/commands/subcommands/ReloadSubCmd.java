@@ -2,6 +2,7 @@ package me.MrRafter.framedupe.commands.subcommands;
 
 import me.MrRafter.framedupe.FrameDupe;
 import me.MrRafter.framedupe.commands.SubCommand;
+import me.MrRafter.framedupe.enums.Permissions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -22,7 +23,7 @@ public class ReloadSubCmd extends SubCommand {
 
     @Override
     public void perform(CommandSender sender, String[] args) {
-        if (sender.hasPermission("framedupe.cmd.reload")) {
+        if (sender.hasPermission(Permissions.CMD_RELOAD.get())) {
             sender.sendMessage(ChatColor.WHITE + "Reloading FrameDupe config...");
             FrameDupe.getFoliaLib().getImpl().runAsync(reload -> {
                 FrameDupe.getInstance().reloadPlugin();

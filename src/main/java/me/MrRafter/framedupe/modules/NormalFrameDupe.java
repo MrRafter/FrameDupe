@@ -105,14 +105,15 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onFramePunch(EntityDamageByEntityEvent event) {
-        final Entity punched = event.getEntity();
-        if (punched == null || !punched.getType().equals(EntityType.ITEM_FRAME)) return;
+        final Entity damaged = event.getEntity();
+        if (damaged == null || !damaged.getType().equals(EntityType.ITEM_FRAME)) return;
 
         final Entity damager = event.getDamager();
+        if (damager == null) return;
         if (probability < 100 && new Random().nextDouble() > probability
                && !damager.hasPermission(Permissions.BYPASS_CHANCE.get())) return;
 
-        final ItemFrame itemFrame = (ItemFrame) punched;
+        final ItemFrame itemFrame = (ItemFrame) damaged;
         final ItemStack frameItem = itemFrame.getItem();
         // Don't do anything if the frame has no item inside
         if (frameItem == null || frameItem.getType().equals(Material.AIR)) return;
