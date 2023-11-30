@@ -107,9 +107,9 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
     private void onFramePunch(EntityDamageByEntityEvent event) {
         final Entity damaged = event.getEntity();
         if (damaged == null || !damaged.getType().equals(EntityType.ITEM_FRAME)) return;
-
         final Entity damager = event.getDamager();
         if (damager == null) return;
+
         if (probability < 100 && new Random().nextDouble() > probability
                && !damager.hasPermission(Permissions.BYPASS_CHANCE.get())) return;
 

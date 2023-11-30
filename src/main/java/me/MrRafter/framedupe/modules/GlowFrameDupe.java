@@ -101,11 +101,11 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
     private void onFramePunch(EntityDamageByEntityEvent event) {
         final Entity damaged = event.getEntity();
         if (damaged == null || !damaged.getType().equals(GLOW_ITEM_FRAME)) return;
-
         final Entity damager = event.getDamager();
         if (damager == null) return;
+
         if (probability < 100 && new Random().nextDouble() > probability
-               && !damager.hasPermission(Permissions.BYPASS_CHANCE.get())) return;
+                && !damager.hasPermission(Permissions.BYPASS_CHANCE.get())) return;
 
         final ItemFrame itemFrame = (ItemFrame) damaged;
         final ItemStack frameItem = itemFrame.getItem();
@@ -113,7 +113,7 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
         if (frameItem == null || frameItem.getType().equals(Material.AIR)) return;
 
         if (cooldownEnabled && !damager.hasPermission(Permissions.BYPASS_COOLDOWN.get())) {
-            final UUID duper = event.getDamager().getUniqueId();
+            final UUID duper = damager.getUniqueId();
             if (dupersOnCooldown.getIfPresent(duper) != null) return;
             else dupersOnCooldown.put(duper, true);
         }
