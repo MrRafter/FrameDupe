@@ -125,7 +125,7 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
             else dupersOnCooldown.put(duper, true);
         }
 
-        if (blacklistEnabled) {
+        if (blacklistEnabled && !damager.hasPermission(Permissions.BYPASS_BLACKLIST.get())) {
             if (blacklist.contains(frameItem.getType())) return;
             if (blacklistCheckShulkers && ShulkerUtil.isShulker(frameItem)) {
                 for (ItemStack shulkerItem : ShulkerUtil.getShulkerInventory(frameItem)) {
@@ -139,7 +139,7 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
             }
         }
 
-        if (whitelistEnabled) {
+        if (whitelistEnabled && !damager.hasPermission(Permissions.BYPASS_WHITELIST.get())) {
             if (!whitelist.contains(frameItem.getType())) return;
             if (whitelistCheckShulkers && ShulkerUtil.isShulker(frameItem)) {
                 for (ItemStack shulkerItem : ShulkerUtil.getShulkerInventory(frameItem)) {

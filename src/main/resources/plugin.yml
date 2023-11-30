@@ -20,6 +20,10 @@ permissions:
     description: Cooldown bypass if enabled
   framedupe.bypass.chance:
     description: Random chance bypass
+  framedupe.bypass.blacklist:
+    description: Item blacklist bypass
+  framedupe.bypass.whitelist:
+    description: Item whitelist bypass
   framedupe.cmd.*:
     description: Command permissions
     children:
