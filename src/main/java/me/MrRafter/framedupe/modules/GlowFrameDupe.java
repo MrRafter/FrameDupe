@@ -6,6 +6,7 @@ import com.tcoded.folialib.FoliaLib;
 import com.tcoded.folialib.impl.ServerImplementation;
 import me.MrRafter.framedupe.FrameConfig;
 import me.MrRafter.framedupe.FrameDupe;
+import me.MrRafter.framedupe.enums.Permissions;
 import me.MrRafter.framedupe.utils.BundleUtil;
 import me.MrRafter.framedupe.utils.ShulkerUtil;
 import org.bukkit.Location;
@@ -100,16 +101,20 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
     private void onFramePunch(EntityDamageByEntityEvent event) {
         final Entity punched = event.getEntity();
         if (punched == null || !punched.getType().equals(GLOW_ITEM_FRAME)) return;
-        if (probability < 100 && new Random().nextDouble() > probability) return;
+
+        final Entity damager = event.getDamager();
+        if (probability < 100 && new Random().nextDouble() > probability
+               && !damager.hasPermission(Permissions.BYPASS_CHANCE.get())) return;
 
         final ItemFrame itemFrame = (ItemFrame) punched;
         final ItemStack frameItem = itemFrame.getItem();
         // Don't do anything if the frame has no item inside
         if (frameItem == null || frameItem.getType().equals(Material.AIR)) return;
 
-        if (cooldownEnabled && event.getDamager() != null) {
+        if (cooldownEnabled) {
             final UUID duper = event.getDamager().getUniqueId();
-            if (dupersOnCooldown.getIfPresent(duper) != null) return;
+            if (dupersOnCooldown.getIfPresent(duper) != null
+                    && !damager.hasPermission(Permissions.BYPASS_COOLDOWN.get())) return;
             else dupersOnCooldown.put(duper, true);
         }
 

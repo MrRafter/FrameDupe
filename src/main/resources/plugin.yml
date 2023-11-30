@@ -16,6 +16,10 @@ commands:
       - fd
 
 permissions:
+  framedupe.bypass.cooldown:
+    description: Cooldown bypass if enabled
+  framedupe.bypass.chance:
+    description: Random chance bypass
   framedupe.cmd.*:
     description: Command permissions
     children:
