@@ -105,61 +105,60 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
         if (damager == null) return;
 
         if (
-                probability < 100
-                && new Random().nextDouble() > probability
-                && (damager.getType().equals(EntityType.PLAYER) && !damager.hasPermission(Permissions.BYPASS_CHANCE.get()))
-        ) return;
+                probability >= 100
+                || new Random().nextDouble() <= probability
+                || (damager.getType().equals(EntityType.PLAYER) && damager.hasPermission(Permissions.BYPASS_CHANCE.get()))
+        ) {
+            final ItemFrame itemFrame = (ItemFrame) damaged;
+            final ItemStack frameItem = itemFrame.getItem();
+            if (frameItem == null || frameItem.getType().equals(Material.AIR)) return;
 
-        final ItemFrame itemFrame = (ItemFrame) damaged;
-        final ItemStack frameItem = itemFrame.getItem();
-        if (frameItem == null || frameItem.getType().equals(Material.AIR)) return;
-
-        if (cooldownEnabled) {
-            final UUID duper = damager.getUniqueId();
-            if (dupersOnCooldown.getIfPresent(duper) != null) return;
-            if (!damager.getType().equals(EntityType.PLAYER) || !damager.hasPermission(Permissions.BYPASS_COOLDOWN.get())) {
-                dupersOnCooldown.put(duper, true);
-            }
-        }
-
-        if (blacklistEnabled && (!damager.getType().equals(EntityType.PLAYER) || !damager.hasPermission(Permissions.BYPASS_BLACKLIST.get()))) {
-            if (blacklist.contains(frameItem.getType())) return;
-            if (blacklistCheckShulkers && ShulkerUtil.isShulker(frameItem)) {
-                for (ItemStack shulkerItem : ShulkerUtil.getShulkerInventory(frameItem)) {
-                    if (shulkerItem != null && blacklist.contains(shulkerItem.getType())) return;
+            if (cooldownEnabled) {
+                final UUID duper = damager.getUniqueId();
+                if (dupersOnCooldown.getIfPresent(duper) != null) return;
+                if (!damager.getType().equals(EntityType.PLAYER) || !damager.hasPermission(Permissions.BYPASS_COOLDOWN.get())) {
+                    dupersOnCooldown.put(duper, true);
                 }
             }
-            if (blacklistCheckBundles && BundleUtil.isNonEmptyBundle(frameItem)) {
-                for (ItemStack bundleItem : BundleUtil.getBundleItems(frameItem)) {
-                    if (bundleItem != null && blacklist.contains(bundleItem.getType())) return;
+
+            if (blacklistEnabled && (!damager.getType().equals(EntityType.PLAYER) || !damager.hasPermission(Permissions.BYPASS_BLACKLIST.get()))) {
+                if (blacklist.contains(frameItem.getType())) return;
+                if (blacklistCheckShulkers && ShulkerUtil.isShulker(frameItem)) {
+                    for (ItemStack shulkerItem : ShulkerUtil.getShulkerInventory(frameItem)) {
+                        if (shulkerItem != null && blacklist.contains(shulkerItem.getType())) return;
+                    }
+                }
+                if (blacklistCheckBundles && BundleUtil.isNonEmptyBundle(frameItem)) {
+                    for (ItemStack bundleItem : BundleUtil.getBundleItems(frameItem)) {
+                        if (bundleItem != null && blacklist.contains(bundleItem.getType())) return;
+                    }
                 }
             }
-        }
 
-        if (whitelistEnabled && (!damager.getType().equals(EntityType.PLAYER) || !damager.hasPermission(Permissions.BYPASS_WHITELIST.get()))) {
-            if (!whitelist.contains(frameItem.getType())) return;
-            if (whitelistCheckShulkers && ShulkerUtil.isShulker(frameItem)) {
-                for (ItemStack shulkerItem : ShulkerUtil.getShulkerInventory(frameItem)) {
-                    if (shulkerItem != null && !whitelist.contains(shulkerItem.getType())) return;
+            if (whitelistEnabled && (!damager.getType().equals(EntityType.PLAYER) || !damager.hasPermission(Permissions.BYPASS_WHITELIST.get()))) {
+                if (!whitelist.contains(frameItem.getType())) return;
+                if (whitelistCheckShulkers && ShulkerUtil.isShulker(frameItem)) {
+                    for (ItemStack shulkerItem : ShulkerUtil.getShulkerInventory(frameItem)) {
+                        if (shulkerItem != null && !whitelist.contains(shulkerItem.getType())) return;
+                    }
+                }
+                if (whitelistCheckBundles && BundleUtil.isNonEmptyBundle(frameItem)) {
+                    for (ItemStack bundleItem : BundleUtil.getBundleItems(frameItem)) {
+                        if (bundleItem != null && !whitelist.contains(bundleItem.getType())) return;
+                    }
                 }
             }
-            if (whitelistCheckBundles && BundleUtil.isNonEmptyBundle(frameItem)) {
-                for (ItemStack bundleItem : BundleUtil.getBundleItems(frameItem)) {
-                    if (bundleItem != null && !whitelist.contains(bundleItem.getType())) return;
-                }
+
+            Location dropLoc = itemFrame.getLocation().getBlock().getRelative(itemFrame.getFacing()).getLocation().clone();
+            dropLoc.setX(dropLoc.getX() + 0.5);
+            dropLoc.setY(dropLoc.getY() - 0.5);
+            dropLoc.setZ(dropLoc.getZ() + 0.5);
+
+            if (!isFolia) {
+                itemFrame.getWorld().dropItemNaturally(dropLoc, frameItem.clone()).setPickupDelay(0);
+            } else {
+                scheduler.runAtEntity(itemFrame, dropAdditional -> itemFrame.getWorld().dropItemNaturally(dropLoc, frameItem.clone()).setPickupDelay(0));
             }
-        }
-
-        Location dropLoc = itemFrame.getLocation().getBlock().getRelative(itemFrame.getFacing()).getLocation().clone();
-        dropLoc.setX(dropLoc.getX()+0.5);
-        dropLoc.setY(dropLoc.getY()-0.5);
-        dropLoc.setZ(dropLoc.getZ()+0.5);
-
-        if (!isFolia) {
-            itemFrame.getWorld().dropItemNaturally(dropLoc, frameItem.clone()).setPickupDelay(0);
-        } else {
-            scheduler.runAtEntity(itemFrame,
-                    dropAdditional -> itemFrame.getWorld().dropItemNaturally(dropLoc, frameItem.clone()).setPickupDelay(0));
         }
     }
 }

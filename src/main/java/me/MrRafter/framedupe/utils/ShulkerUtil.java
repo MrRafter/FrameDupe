@@ -7,19 +7,26 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 
 public class ShulkerUtil {
 
-    /*
-    * Metas as well as instanceof checks are slower than Material checks, but since we don't have to trigger this check
-    * multiple times a second, it doesn't matter and also enables us to easily stay cross-version compatible.
-    */
+    /**
+     *  Checks if an ItemStack is a shulker.
+     *
+     *  @param itemStack ItemStack to check
+     *  @return true if the ItemStack is indeed a shulker
+     */
     public static boolean isShulker(final ItemStack itemStack) {
         if (itemStack == null) return false;
+        // Instanceof checks and metas are slower than Material checks, but since we don't have to trigger this logic
+        // that often in a short time, it doesn't matter too much and also enables us to easily stay cross-version compatible.
         if (!(itemStack.getItemMeta() instanceof BlockStateMeta)) return false;
         return ((BlockStateMeta) itemStack.getItemMeta()).getBlockState() instanceof ShulkerBox;
     }
 
-    /*
-    * Only save to use if called once it has been confirmed that the passed ItemStack is indeed a ShulkerBox.
-    */
+    /**
+     *  Only save to use if called once it has been confirmed that the passed ItemStack is indeed a ShulkerBox.
+     *
+     *  @param shulkerItem the shulker item
+     *  @return The inventory of the shulker
+     */
     public static Inventory getShulkerInventory(final ItemStack shulkerItem) {
         return ((ShulkerBox) ((BlockStateMeta) shulkerItem.getItemMeta()).getBlockState()).getInventory();
     }
