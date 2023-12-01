@@ -110,10 +110,13 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
         final Entity damager = event.getDamager();
         if (damager == null) return;
 
+        // Check once so we can reuse that info
+        final boolean isPlayer = damager.getType().equals(EntityType.PLAYER);
+
         if (
                 probability >= 100
                 || new Random().nextDouble() <= probability
-                || (damager.getType().equals(EntityType.PLAYER) && damager.hasPermission(Permissions.BYPASS_CHANCE.get()))
+                || (isPlayer && damager.hasPermission(Permissions.BYPASS_CHANCE.get()))
         ) {
             final ItemFrame itemFrame = (ItemFrame) damaged;
             final ItemStack frameItem = itemFrame.getItem();
@@ -123,12 +126,12 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
             if (cooldownEnabled) {
                 final UUID duper = damager.getUniqueId();
                 if (dupersOnCooldown.getIfPresent(duper) != null) return;
-                if (!damager.getType().equals(EntityType.PLAYER) || !damager.hasPermission(Permissions.BYPASS_COOLDOWN.get())) {
+                if (!isPlayer || !damager.hasPermission(Permissions.BYPASS_COOLDOWN.get())) {
                     dupersOnCooldown.put(duper, true);
                 }
             }
 
-            if (blacklistEnabled && (!damager.getType().equals(EntityType.PLAYER) || !damager.hasPermission(Permissions.BYPASS_BLACKLIST.get()))) {
+            if (blacklistEnabled && (!isPlayer || !damager.hasPermission(Permissions.BYPASS_BLACKLIST.get()))) {
                 if (blacklist.contains(frameItem.getType())) return;
                 if (blacklistCheckShulkers && ShulkerUtil.isShulker(frameItem)) {
                     for (ItemStack shulkerItem : ShulkerUtil.getShulkerInventory(frameItem)) {
@@ -142,7 +145,7 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
                 }
             }
 
-            if (whitelistEnabled && (!damager.getType().equals(EntityType.PLAYER) || !damager.hasPermission(Permissions.BYPASS_WHITELIST.get()))) {
+            if (whitelistEnabled && (!isPlayer || !damager.hasPermission(Permissions.BYPASS_WHITELIST.get()))) {
                 if (!whitelist.contains(frameItem.getType())) return;
                 if (whitelistCheckShulkers && ShulkerUtil.isShulker(frameItem)) {
                     for (ItemStack shulkerItem : ShulkerUtil.getShulkerInventory(frameItem)) {
