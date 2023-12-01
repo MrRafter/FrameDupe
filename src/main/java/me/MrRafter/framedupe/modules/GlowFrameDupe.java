@@ -135,7 +135,7 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
                         if (shulkerItem == null) continue;
                         if (blacklist.contains(shulkerItem.getType())) return;
                         if (blacklistCheckBundles && BundleUtil.isNonEmptyBundle(shulkerItem)) {
-                            for (ItemStack bundleItem : BundleUtil.getBundleItems(frameItem)) {
+                            for (ItemStack bundleItem : BundleUtil.getBundleItems(shulkerItem)) {
                                 if (bundleItem != null && blacklist.contains(bundleItem.getType())) return;
                             }
                         }
@@ -154,8 +154,8 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
                     for (ItemStack shulkerItem : ShulkerUtil.getShulkerInventory(frameItem)) {
                         if (shulkerItem == null) continue;
                         if (!whitelist.contains(shulkerItem.getType())) return;
-                        if (whitelistCheckBundles && BundleUtil.isNonEmptyBundle(frameItem)) {
-                            for (ItemStack bundleItem : BundleUtil.getBundleItems(frameItem)) {
+                        if (whitelistCheckBundles && BundleUtil.isNonEmptyBundle(shulkerItem)) {
+                            for (ItemStack bundleItem : BundleUtil.getBundleItems(shulkerItem)) {
                                 if (bundleItem != null && !whitelist.contains(bundleItem.getType())) return;
                             }
                         }
