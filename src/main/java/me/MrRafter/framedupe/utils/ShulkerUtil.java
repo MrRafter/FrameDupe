@@ -24,10 +24,10 @@ public class ShulkerUtil {
     /**
      *  Only save to use if called once it has been confirmed that the passed ItemStack is indeed a ShulkerBox.
      *
-     *  @param shulkerItem the shulker item
+     *  @param shulker the shulker ItemStack
      *  @return The inventory of the shulker
      */
-    public static Inventory getShulkerInventory(final ItemStack shulkerItem) {
-        return ((ShulkerBox) ((BlockStateMeta) shulkerItem.getItemMeta()).getBlockState()).getInventory();
+    public static Inventory getShulkerInventory(final ItemStack shulker) {
+        return ((ShulkerBox) ((BlockStateMeta) shulker.getItemMeta()).getBlockState()).getInventory();
     }
 }

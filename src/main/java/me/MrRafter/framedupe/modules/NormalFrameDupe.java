@@ -133,28 +133,40 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
 
             if (blacklistEnabled && (!isPlayer || !damager.hasPermission(Permissions.BYPASS_BLACKLIST.get()))) {
                 if (blacklist.contains(frameItem.getType())) return;
-                if (blacklistCheckShulkers && ShulkerUtil.isShulker(frameItem)) {
-                    for (ItemStack shulkerItem : ShulkerUtil.getShulkerInventory(frameItem)) {
-                        if (shulkerItem != null && blacklist.contains(shulkerItem.getType())) return;
-                    }
-                }
                 if (blacklistCheckBundles && BundleUtil.isNonEmptyBundle(frameItem)) {
                     for (ItemStack bundleItem : BundleUtil.getBundleItems(frameItem)) {
                         if (bundleItem != null && blacklist.contains(bundleItem.getType())) return;
+                    }
+                }
+                if (blacklistCheckShulkers && ShulkerUtil.isShulker(frameItem)) {
+                    for (ItemStack shulkerItem : ShulkerUtil.getShulkerInventory(frameItem)) {
+                        if (shulkerItem == null) continue;
+                        if (blacklist.contains(shulkerItem.getType())) return;
+                        if (blacklistCheckBundles && BundleUtil.isNonEmptyBundle(shulkerItem)) {
+                            for (ItemStack bundleItem : BundleUtil.getBundleItems(frameItem)) {
+                                if (bundleItem != null && blacklist.contains(bundleItem.getType())) return;
+                            }
+                        }
                     }
                 }
             }
 
             if (whitelistEnabled && (!isPlayer || !damager.hasPermission(Permissions.BYPASS_WHITELIST.get()))) {
                 if (!whitelist.contains(frameItem.getType())) return;
-                if (whitelistCheckShulkers && ShulkerUtil.isShulker(frameItem)) {
-                    for (ItemStack shulkerItem : ShulkerUtil.getShulkerInventory(frameItem)) {
-                        if (shulkerItem != null && !whitelist.contains(shulkerItem.getType())) return;
-                    }
-                }
                 if (whitelistCheckBundles && BundleUtil.isNonEmptyBundle(frameItem)) {
                     for (ItemStack bundleItem : BundleUtil.getBundleItems(frameItem)) {
                         if (bundleItem != null && !whitelist.contains(bundleItem.getType())) return;
+                    }
+                }
+                if (whitelistCheckShulkers && ShulkerUtil.isShulker(frameItem)) {
+                    for (ItemStack shulkerItem : ShulkerUtil.getShulkerInventory(frameItem)) {
+                        if (shulkerItem == null) continue;
+                        if (!whitelist.contains(shulkerItem.getType())) return;
+                        if (whitelistCheckBundles && BundleUtil.isNonEmptyBundle(frameItem)) {
+                            for (ItemStack bundleItem : BundleUtil.getBundleItems(frameItem)) {
+                                if (bundleItem != null && !whitelist.contains(bundleItem.getType())) return;
+                            }
+                        }
                     }
                 }
             }
