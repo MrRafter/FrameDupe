@@ -31,11 +31,11 @@ public final class FrameDupe extends JavaPlugin {
         // Enable
         logger.info("                         ");
         logger.info("           /*\\           ");
-        logger.info("      ┏╍╍╍╍╍╍╍╍╍╍╍┓      ");
-        logger.info("      ┋           ┋      ");
-        logger.info("      ┋           ┋      ");
-        logger.info("      ┋           ┋      ");
-        logger.info("      ┗╍╍╍╍╍╍╍╍╍╍╍┛      ");
+        logger.info("      ┏━━━━━━━━━━━┓      ");
+        logger.info("      ┃           ┃      ");
+        logger.info("      ┃           ┃      ");
+        logger.info("      ┃           ┃      ");
+        logger.info("      ┗━━━━━━━━━━━┛      ");
         logger.info("        FrameDupe        ");
         logger.info("                         ");
         logger.info("Loading config");
