@@ -165,13 +165,13 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
 
             Location dropLoc = itemFrame.getLocation().getBlock().getRelative(itemFrame.getFacing()).getLocation().clone();
             dropLoc.setX(dropLoc.getX() + 0.5);
-            dropLoc.setY(dropLoc.getY() - 0.5);
+            dropLoc.setY(dropLoc.getY() - 0.2);
             dropLoc.setZ(dropLoc.getZ() + 0.5);
 
             if (!isFolia) {
-                itemFrame.getWorld().dropItemNaturally(dropLoc, frameItem.clone()).setPickupDelay(0);
+                itemFrame.getWorld().dropItemNaturally(dropLoc, frameItem);
             } else {
-                scheduler.runAtEntity(itemFrame, dropAdditional -> itemFrame.getWorld().dropItemNaturally(dropLoc, frameItem.clone()).setPickupDelay(0));
+                scheduler.runAtEntity(itemFrame, dropAdditional -> itemFrame.getWorld().dropItemNaturally(dropLoc, frameItem));
             }
         }
     }
