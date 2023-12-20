@@ -26,6 +26,7 @@ import java.util.*;
 
 public class NormalFrameDupe implements FrameDupeModule, Listener {
 
+    private final Random RNG;
     private final ServerImplementation scheduler;
     private final Cache<UUID, Boolean> dupersOnCooldown;
     private final Set<Material> blacklist, whitelist;
@@ -35,6 +36,7 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
 
     protected NormalFrameDupe() {
         shouldEnable(); // make enable option appear on top
+        this.RNG = new Random();
         final FoliaLib foliaLib = FrameDupe.getFoliaLib();
         this.isFolia = foliaLib.isFolia();
         this.scheduler = isFolia ? foliaLib.getImpl() : null;
@@ -115,7 +117,7 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
 
         if (
                 probability >= 100
-                || new Random().nextDouble() <= probability
+                || RNG.nextDouble() <= probability
                 || (isPlayer && damager.hasPermission(Permissions.BYPASS_CHANCE.get()))
         ) {
             final ItemFrame itemFrame = (ItemFrame) damaged;
