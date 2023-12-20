@@ -11,7 +11,13 @@ public class FrameConfig {
     private final ConfigFile config;
 
     protected FrameConfig() throws Exception {
-        this.config = loadConfig(new File(FrameDupe.getInstance().getDataFolder(), "config.yml"));
+        // Create plugin folder first if it does not exist yet
+        File pluginFolder = FrameDupe.getInstance().getDataFolder();
+        if (!pluginFolder.exists() && !pluginFolder.mkdir())
+            FrameDupe.getPrefixedLogger().severe("Failed to create plugin folder.");
+        // Load config.yml with ConfigMaster
+        this.config = ConfigFile.loadConfig(new File(pluginFolder, "config.yml"));
+        // Set title with credits
         this.config.setTitle(new Title()
                 .withPadding(true)
                 .addSolidLine()
@@ -23,12 +29,6 @@ public class FrameConfig {
                 .addLine(" ")
                 .addSolidLine()
         );
-    }
-
-    private ConfigFile loadConfig(File ymlFile) throws Exception {
-        File parent = new File(ymlFile.getParent());
-        if (!parent.exists() && !parent.mkdir()) FrameDupe.getPrefixedLogger().severe("Unable to create plugin config directory.");
-        return ConfigFile.loadConfig(ymlFile);
     }
 
     public void saveConfig() {
