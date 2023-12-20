@@ -28,7 +28,6 @@ public class FrameConfig {
     private ConfigFile loadConfig(File ymlFile) throws Exception {
         File parent = new File(ymlFile.getParent());
         if (!parent.exists() && !parent.mkdir()) FrameDupe.getPrefixedLogger().severe("Unable to create plugin config directory.");
-        if (!ymlFile.exists()) ymlFile.createNewFile();
         return ConfigFile.loadConfig(ymlFile);
     }
 
@@ -72,16 +71,6 @@ public class FrameConfig {
     public double getDouble(String path, double def, String comment) {
         config.addDefault(path, def, comment);
         return config.getDouble(path, def);
-    }
-
-    public String getString(String path, String def) {
-        config.addDefault(path, def);
-        return config.getString(path, def);
-    }
-
-    public String getString(String path, String def, String comment) {
-        config.addDefault(path, def, comment);
-        return config.getString(path, def);
     }
 
     public List<String> getList(String path, List<String> def) {
