@@ -26,7 +26,7 @@ public class ReloadSubCmd extends SubCommand {
         if (sender.hasPermission(Permissions.CMD_RELOAD.get())) {
             sender.sendMessage(ChatColor.WHITE + "Reloading FrameDupe config...");
             FrameDupe.getFoliaLib().getImpl().runAsync(reload -> {
-                FrameDupe.getInstance().reloadPlugin();
+                FrameDupe.getInstance().reloadConfiguration();
                 sender.sendMessage(ChatColor.GREEN + "Reload complete.");
             });
         } else {

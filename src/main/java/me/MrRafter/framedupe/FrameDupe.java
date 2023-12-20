@@ -14,20 +14,32 @@ public final class FrameDupe extends JavaPlugin {
     private static FrameConfig config;
     private static Logger logger;
 
+    @Override
     public void onEnable() {
+        logger = getLogger();
+        instance = this;
+
         // Check if plugin can be enabled in the first place
         try {
             Class.forName("org.bukkit.entity.ItemFrame");
         } catch (ClassNotFoundException e) {
-            logger.severe("Your server version does not have item frames. Plugin cannot enable.");
-            getServer().getPluginManager().disablePlugin(this);
+            logger.severe("Your server does not have item frames. Plugin cannot enable.");
+            getServer().getPluginManager().disablePlugin(instance);
             return;
         }
+
         // Enable
-        instance = this;
-        logger = getLogger();
+        logger.info("                         ");
+        logger.info("           /*\\           ");
+        logger.info("      ┏╍╍╍╍╍╍╍╍╍╍╍┓      ");
+        logger.info("      ┋           ┋      ");
+        logger.info("      ┋           ┋      ");
+        logger.info("      ┋           ┋      ");
+        logger.info("      ┗╍╍╍╍╍╍╍╍╍╍╍┛      ");
+        logger.info("        FrameDupe        ");
+        logger.info("                         ");
         logger.info("Loading config");
-        reloadPlugin();
+        reloadConfiguration();
         logger.info("Registering commands");
         getCommand("framedupe").setExecutor(new FrameDupeCommand());
         logger.info("Loading Metrics");
@@ -48,7 +60,7 @@ public final class FrameDupe extends JavaPlugin {
         return logger;
     }
 
-    public void reloadPlugin() {
+    public void reloadConfiguration() {
         try {
             config = new FrameConfig();
             FrameDupeModule.reloadModules();
