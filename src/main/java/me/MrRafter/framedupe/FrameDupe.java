@@ -88,7 +88,7 @@ public final class FrameDupe extends JavaPlugin {
     }
 
     public static boolean serverHasShulkers() {
-        return XMaterial.SHULKER_BOX.isSupported();
+        return !MATERIAL_SHULKER_BOXES.isEmpty();
     }
 
     public static boolean serverHasGlowItemFrames() {
@@ -96,6 +96,6 @@ public final class FrameDupe extends JavaPlugin {
     }
 
     public static boolean serverHasBundles() {
-        return XMaterial.BUNDLE.isSupported();
+        return MATERIAL_BUNDLE != null;
     }
 }
