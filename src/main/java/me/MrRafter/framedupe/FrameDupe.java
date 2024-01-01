@@ -18,8 +18,8 @@ public final class FrameDupe extends JavaPlugin {
     private static FrameDupe instance;
     private static FrameConfig config;
     private static Logger logger;
-    public static Set<Material> SHULKER_BOXES;
-    public static Material BUNDLE;
+    public static Set<Material> MATERIAL_SHULKER_BOXES;
+    public static Material MATERIAL_BUNDLE;
 
     @Override
     public void onEnable() {
@@ -46,13 +46,13 @@ public final class FrameDupe extends JavaPlugin {
         logger.info("        FrameDupe        ");
         logger.info("                         ");
         // Cache ShulkerBox Materials
-        SHULKER_BOXES = XTag.SHULKER_BOXES.getValues()
+        MATERIAL_SHULKER_BOXES = XTag.SHULKER_BOXES.getValues()
                 .stream()
                 .filter(XMaterial::isSupported)
                 .map(XMaterial::parseMaterial)
                 .collect(Collectors.toSet());
         // Cache Bundle Material
-        BUNDLE = XMaterial.BUNDLE.parseMaterial();
+        MATERIAL_BUNDLE = XMaterial.BUNDLE.parseMaterial();
 
         logger.info("Loading config");
         reloadConfiguration();

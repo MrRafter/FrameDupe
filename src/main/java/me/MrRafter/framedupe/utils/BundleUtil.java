@@ -17,7 +17,7 @@ public class BundleUtil {
     public static boolean isBundle(final ItemStack itemStack) {
         if (itemStack == null) return false;
         // We can check Material here since, unlike with shulkers, it hasn't been changed between versions yet.
-        return itemStack.getType().equals(FrameDupe.BUNDLE);
+        return itemStack.getType().equals(FrameDupe.MATERIAL_BUNDLE);
     }
 
     /**

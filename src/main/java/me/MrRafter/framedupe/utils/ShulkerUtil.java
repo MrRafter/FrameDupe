@@ -17,7 +17,7 @@ public class ShulkerUtil {
      */
     public static boolean isShulkerBox(final ItemStack itemStack) {
         if (itemStack == null) return false;
-        return FrameDupe.SHULKER_BOXES.contains(itemStack.getType());
+        return FrameDupe.MATERIAL_SHULKER_BOXES.contains(itemStack.getType());
     }
 
     /**
