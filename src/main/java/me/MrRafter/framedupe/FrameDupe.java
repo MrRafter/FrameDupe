@@ -14,6 +14,8 @@ public final class FrameDupe extends JavaPlugin {
     private static FrameConfig config;
     private static Logger logger;
 
+
+
     @Override
     public void onEnable() {
         logger = getLogger();
