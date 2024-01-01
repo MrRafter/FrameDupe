@@ -28,8 +28,9 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
 
     private final Random RNG;
     private final ServerImplementation scheduler;
-    private final Cache<UUID, Boolean> dupersOnCooldown;
+    private final Cache<UUID, Object> dupersOnCooldown;
     private final Set<Material> blacklist, whitelist;
+    private final Object PRESENT = new Object(); // Dummy value to associate with an Object in the backing Cache
     private final double probability;
     private final boolean isFolia, blacklistEnabled, blacklistCheckShulkers, blacklistCheckBundles,
             whitelistEnabled, whitelistCheckShulkers, whitelistCheckBundles, cooldownEnabled;
@@ -129,7 +130,7 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
                 final UUID duper = damager.getUniqueId();
                 if (dupersOnCooldown.getIfPresent(duper) != null) return;
                 if (!isPlayer || !damager.hasPermission(Permissions.BYPASS_COOLDOWN.get())) {
-                    dupersOnCooldown.put(duper, true);
+                    dupersOnCooldown.put(duper, PRESENT);
                 }
             }
 
