@@ -44,15 +44,15 @@
                             <relocations>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
-                                    <shadedPattern>me.MrRafter.framedupe.bStats</shadedPattern>
+                                    <shadedPattern>me.MrRafter.framedupe.shaded.bstats</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.tcoded.folialib</pattern>
-                                    <shadedPattern>me.MrRafter.framedupe.folialib</shadedPattern>
+                                    <shadedPattern>me.MrRafter.framedupe.shaded.folialib</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.github.benmanes.caffeine</pattern>
-                                    <shadedPattern>me.MrRafter.framedupe.caffeine</shadedPattern>
+                                    <shadedPattern>me.MrRafter.framedupe.shaded.caffeine</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
