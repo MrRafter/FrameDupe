@@ -32,7 +32,7 @@ public class ShulkerUtil {
         } catch (ClassCastException e) {
             FrameDupe.getPrefixedLogger().warning("Tried to read ShulkerBox content from ItemStack but got something else:");
             FrameDupe.getPrefixedLogger().warning("(!) "+e.getLocalizedMessage());
-            FrameDupe.getPrefixedLogger().warning("ItemStack that should be a bundle: "+shulker);
+            FrameDupe.getPrefixedLogger().warning("ItemStack that should be a ShulkerBox: "+shulker);
             return Collections.emptyList();
         }
     }
