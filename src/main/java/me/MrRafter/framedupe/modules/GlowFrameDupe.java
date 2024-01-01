@@ -42,7 +42,7 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
         final FoliaLib foliaLib = FrameDupe.getFoliaLib();
         this.isFolia = foliaLib.isFolia();
         this.scheduler = isFolia ? foliaLib.getImpl() : null;
-        try { this.GLOW_ITEM_FRAME = EntityType.valueOf("GLOW_ITEM_FRAME"); } catch (IllegalArgumentException ignored) {}
+        try { this.GLOW_ITEM_FRAME = EntityType.valueOf("GLOW_ITEM_FRAME"); } catch (IllegalArgumentException unreachable) {}
         FrameConfig config = FrameDupe.getConfiguration();
         config.master().addSection("GLOW_FrameDupe", "Glow Frame Dupe");
         config.master().addComment("GLOW_FrameDupe.Enabled",

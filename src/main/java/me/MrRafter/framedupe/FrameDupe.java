@@ -1,5 +1,6 @@
 package me.MrRafter.framedupe;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.tcoded.folialib.FoliaLib;
 import me.MrRafter.framedupe.commands.FrameDupeCommand;
 import me.MrRafter.framedupe.modules.FrameDupeModule;
@@ -74,29 +75,14 @@ public final class FrameDupe extends JavaPlugin {
     }
 
     public static boolean serverHasShulkers() {
-        try {
-            Class.forName("org.bukkit.block.ShulkerBox");
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
+        return XMaterial.SHULKER_BOX.isSupported();
     }
 
     public static boolean serverHasGlowItemFrames() {
-        try {
-            Class.forName("org.bukkit.entity.GlowItemFrame");
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
+        return XMaterial.GLOW_ITEM_FRAME.isSupported();
     }
 
     public static boolean serverHasBundles() {
-        try {
-            Class.forName("org.bukkit.inventory.meta.BundleMeta");
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
+        return XMaterial.BUNDLE.isSupported();
     }
 }
