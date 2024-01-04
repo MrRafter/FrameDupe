@@ -42,7 +42,7 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
         final FoliaLib foliaLib = FrameDupe.getFoliaLib();
         this.isFolia = foliaLib.isFolia();
         this.scheduler = isFolia ? foliaLib.getImpl() : null;
-        try { this.GLOW_ITEM_FRAME = EntityType.valueOf("GLOW_ITEM_FRAME"); } catch (IllegalArgumentException unreachable) {}
+        try { this.GLOW_ITEM_FRAME = EntityType.valueOf("GLOW_ITEM_FRAME"); } catch (IllegalArgumentException ignored) {}
         FrameConfig config = FrameDupe.getConfiguration();
         config.master().addSection("GLOW_FrameDupe", "Glow Frame Dupe");
         config.master().addComment("GLOW_FrameDupe.Enabled",
@@ -115,8 +115,8 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
                 || (isPlayer && damager.hasPermission(Permissions.BYPASS_CHANCE.get()))
         ) {
             final ItemFrame itemFrame = (ItemFrame) damaged;
-            final ItemStack frameItem = itemFrame.getItem();
-            if (frameItem == null || frameItem.getType().equals(Material.AIR)) return;
+            final ItemStack itemInItemFrame = itemFrame.getItem();
+            if (itemInItemFrame == null || itemInItemFrame.getType().equals(Material.AIR)) return;
 
             if (cooldownEnabled) {
                 final UUID duper = damager.getUniqueId();
@@ -127,18 +127,18 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
             }
 
             if (blacklistEnabled && (!isPlayer || !damager.hasPermission(Permissions.BYPASS_BLACKLIST.get()))) {
-                if (blacklist.contains(frameItem.getType())) return;
-                if (blacklistCheckBundles && BundleUtil.isBundle(frameItem)) {
-                    for (ItemStack bundleItem : BundleUtil.getBundleItems(frameItem)) {
+                if (blacklist.contains(itemInItemFrame.getType())) return;
+                if (blacklistCheckBundles && BundleUtil.isBundle(itemInItemFrame)) {
+                    for (ItemStack bundleItem : BundleUtil.getItems(itemInItemFrame)) {
                         if (bundleItem != null && blacklist.contains(bundleItem.getType())) return;
                     }
                 }
-                if (blacklistCheckShulkers && ShulkerUtil.isShulkerBox(frameItem)) {
-                    for (ItemStack shulkerItem : ShulkerUtil.getShulkerBoxItems(frameItem)) {
+                if (blacklistCheckShulkers && ShulkerUtil.isShulkerBox(itemInItemFrame)) {
+                    for (ItemStack shulkerItem : ShulkerUtil.getItems(itemInItemFrame)) {
                         if (shulkerItem == null) continue;
                         if (blacklist.contains(shulkerItem.getType())) return;
                         if (blacklistCheckBundles && BundleUtil.isBundle(shulkerItem)) {
-                            for (ItemStack bundleItem : BundleUtil.getBundleItems(shulkerItem)) {
+                            for (ItemStack bundleItem : BundleUtil.getItems(shulkerItem)) {
                                 if (bundleItem != null && blacklist.contains(bundleItem.getType())) return;
                             }
                         }
@@ -147,18 +147,18 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
             }
 
             if (whitelistEnabled && (!isPlayer || !damager.hasPermission(Permissions.BYPASS_WHITELIST.get()))) {
-                if (!whitelist.contains(frameItem.getType())) return;
-                if (whitelistCheckBundles && BundleUtil.isBundle(frameItem)) {
-                    for (ItemStack bundleItem : BundleUtil.getBundleItems(frameItem)) {
+                if (!whitelist.contains(itemInItemFrame.getType())) return;
+                if (whitelistCheckBundles && BundleUtil.isBundle(itemInItemFrame)) {
+                    for (ItemStack bundleItem : BundleUtil.getItems(itemInItemFrame)) {
                         if (bundleItem != null && !whitelist.contains(bundleItem.getType())) return;
                     }
                 }
-                if (whitelistCheckShulkers && ShulkerUtil.isShulkerBox(frameItem)) {
-                    for (ItemStack shulkerItem : ShulkerUtil.getShulkerBoxItems(frameItem)) {
+                if (whitelistCheckShulkers && ShulkerUtil.isShulkerBox(itemInItemFrame)) {
+                    for (ItemStack shulkerItem : ShulkerUtil.getItems(itemInItemFrame)) {
                         if (shulkerItem == null) continue;
                         if (!whitelist.contains(shulkerItem.getType())) return;
                         if (whitelistCheckBundles && BundleUtil.isBundle(shulkerItem)) {
-                            for (ItemStack bundleItem : BundleUtil.getBundleItems(shulkerItem)) {
+                            for (ItemStack bundleItem : BundleUtil.getItems(shulkerItem)) {
                                 if (bundleItem != null && !whitelist.contains(bundleItem.getType())) return;
                             }
                         }
@@ -172,9 +172,9 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
             dropLoc.setZ(dropLoc.getZ() + 0.5);
 
             if (!isFolia) {
-                itemFrame.getWorld().dropItemNaturally(dropLoc, frameItem);
+                itemFrame.getWorld().dropItemNaturally(dropLoc, itemInItemFrame);
             } else {
-                scheduler.runAtEntity(itemFrame, dropAdditional -> itemFrame.getWorld().dropItemNaturally(dropLoc, frameItem));
+                scheduler.runAtEntity(itemFrame, dropAdditional -> itemFrame.getWorld().dropItemNaturally(dropLoc, itemInItemFrame));
             }
         }
     }
