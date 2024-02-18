@@ -1,14 +1,12 @@
 package me.MrRafter.framedupe.modules;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import com.tcoded.folialib.FoliaLib;
 import com.tcoded.folialib.impl.ServerImplementation;
-import me.MrRafter.framedupe.FrameConfig;
+import me.MrRafter.framedupe.DupeConfig;
 import me.MrRafter.framedupe.FrameDupe;
 import me.MrRafter.framedupe.enums.Permissions;
-import me.MrRafter.framedupe.utils.BundleUtil;
-import me.MrRafter.framedupe.utils.ShulkerUtil;
+import me.MrRafter.framedupe.utils.ItemUtil;
+import me.MrRafter.framedupe.utils.ExpiringSet;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -23,71 +21,68 @@ import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class NormalFrameDupe implements FrameDupeModule, Listener {
 
-    private final Random RNG;
     private final ServerImplementation scheduler;
-    private final Cache<UUID, Object> dupersOnCooldown;
+    private final ExpiringSet<UUID> dupersOnCooldown;
     private final Set<Material> blacklist, whitelist;
-    private final Object PRESENT = new Object(); // Dummy value to associate with an Object in the backing Cache
     private final double probability;
-    private final boolean isFolia, blacklistEnabled, blacklistCheckShulkers, blacklistCheckBundles,
-            whitelistEnabled, whitelistCheckShulkers, whitelistCheckBundles, cooldownEnabled;
+    private final boolean isFolia, cooldownEnabled,
+            blacklistEnabled, blacklistCheckInsideItems,
+            whitelistEnabled, whitelistCheckInsideItems;
 
     protected NormalFrameDupe() {
         shouldEnable(); // make enable option appear on top
-        this.RNG = new Random();
         final FoliaLib foliaLib = FrameDupe.getFoliaLib();
         this.isFolia = foliaLib.isFolia();
         this.scheduler = isFolia ? foliaLib.getImpl() : null;
-        FrameConfig config = FrameDupe.getConfiguration();
+        DupeConfig config = FrameDupe.getConfiguration();
         config.master().addSection("FrameDupe", "Item Frame Dupe");
         config.master().addComment("FrameDupe.Enabled", "Enable duping by removing items from normal item frames.");
         this.probability = config.getDouble("FrameDupe.Probability-Percentage", 50.0,
                 "50.0 = 50%. Has to be greater than 0. Recommended not to set to 100% unless\n" +
                         "you are okay with players gaining items very quickly (May also increase lag for low spec clients).") / 100;
-        if (probability <= 0) FrameDupe.getPrefixedLogger().warning("Probability percentage is 0 or lower. Not enabling frame dupe.");
+        if (probability <= 0) FrameDupe.getPrefixedLogger().warning("Probability percentage is 0 or lower. Frame dupe will not enable.");
         this.cooldownEnabled = config.getBoolean("FrameDupe.Cooldown.Enabled", true,
                 "Prevent abuse by players using automation mods.");
-        final long cooldownMillis = config.getInt("FrameDupe.Cooldown.Ticks", 15,
-                "1 sec = 20 ticks") * 50L;
-        this.dupersOnCooldown = cooldownEnabled ? Caffeine.newBuilder().expireAfterWrite(Duration.ofMillis(cooldownMillis)).build() : null;
+        this.dupersOnCooldown = cooldownEnabled ? new ExpiringSet<>(Duration.ofMillis(
+                Math.max(config.getInt("FrameDupe.Cooldown.Ticks", 15, "1 sec = 20 ticks"), 1) * 50L
+        )) : null;
         this.blacklistEnabled = config.getBoolean("FrameDupe.Blacklist.Enabled", false,
                 "If enabled, all items in this list will not be duplicated.");
-        this.blacklistCheckShulkers = config.getBoolean("FrameDupe.Blacklist.Check-Shulkers", true,
-                "Whether to check inside shulkers for blacklisted items.") && FrameDupe.serverHasShulkers();
-        this.blacklistCheckBundles = config.getBoolean("FrameDupe.Blacklist.Check-Bundles", true,
-                "Whether to check inside bundles for blacklisted items.") && FrameDupe.serverHasBundles();
-        final List<String> configuredBlacklist = config.getList("FrameDupe.Blacklist.Items", Collections.singletonList("DRAGON_EGG"),
-                "Please use correct Spigot Material values for your minecraft version.");
-        this.blacklist = new HashSet<>(configuredBlacklist.size());
-        configuredBlacklist.forEach(configuredItem -> {
-            try {
-                Material material = Material.valueOf(configuredItem);
-                this.blacklist.add(material);
-            } catch (IllegalArgumentException e) {
-                FrameDupe.getPrefixedLogger().warning("Configured item '"+configuredItem+"' was not recognized. " +
-                        "Please use the correct Material enums for your server version.");
-            }
-        });
+        this.blacklistCheckInsideItems = config.getBoolean("FrameDupe.Blacklist.Check-Inside-Items", true);
+        this.blacklist = config.getList("FrameDupe.Blacklist.Items", Collections.singletonList("DRAGON_EGG"),
+                "Please use correct Spigot Material values for your minecraft version.")
+                .stream()
+                .map(configuredItem -> {
+                    try {
+                        return Material.valueOf(configuredItem);
+                    } catch (IllegalArgumentException e) {
+                        FrameDupe.getPrefixedLogger().warning("Configured item '"+configuredItem+"' was not recognized. " +
+                                "Please use the correct Material enums for your server version.");
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(HashSet::new));
         this.whitelistEnabled = config.getBoolean("FrameDupe.Whitelist.Enabled", false,
                 "If enabled, only items in this list can be duped.");
-        this.whitelistCheckShulkers = config.getBoolean("FrameDupe.Whitelist.Check-Shulkers", true,
-                "Whether to check inside shulkers for whitelisted items.") && FrameDupe.serverHasShulkers();
-        this.whitelistCheckBundles = config.getBoolean("FrameDupe.Whitelist.Check-Bundles", true,
-                "Whether to check inside bundles for whitelisted items.") && FrameDupe.serverHasBundles();
-        final List<String> configuredWhitelist = config.getList("FrameDupe.Whitelist.Items", Collections.singletonList("DIAMOND"));
-        this.whitelist = new HashSet<>(configuredWhitelist.size());
-        configuredWhitelist.forEach(configuredItem -> {
-            try {
-                Material material = Material.valueOf(configuredItem);
-                this.whitelist.add(material);
-            } catch (IllegalArgumentException e) {
-                FrameDupe.getPrefixedLogger().warning("Configured item '"+configuredItem+"' was not recognized. " +
-                        "Please use the correct Material enums for your server version.");
-            }
-        });
+        this.whitelistCheckInsideItems = config.getBoolean("FrameDupe.Whitelist.Check-Inside-Items", true);
+        this.whitelist = config.getList("FrameDupe.Whitelist.Items", Collections.singletonList("DIAMOND"))
+                .stream()
+                .map(configuredItem -> {
+                    try {
+                        return Material.valueOf(configuredItem);
+                    } catch (IllegalArgumentException e) {
+                        FrameDupe.getPrefixedLogger().warning("Configured item '"+configuredItem+"' was not recognized. " +
+                                "Please use the correct Material enums for your server version.");
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(HashSet::new));
     }
 
     @Override
@@ -118,7 +113,7 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
 
         if (
                 probability >= 100
-                || RNG.nextDouble() <= probability
+                || FrameDupe.getRandom().nextDouble() <= probability
                 || (isPlayer && damager.hasPermission(Permissions.BYPASS_CHANCE.get()))
         ) {
             final ItemFrame itemFrame = (ItemFrame) damaged;
@@ -127,28 +122,23 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
             if (itemInItemFrame == null || itemInItemFrame.getType().equals(Material.AIR)) return;
 
             if (cooldownEnabled) {
-                final UUID duper = damager.getUniqueId();
-                if (dupersOnCooldown.getIfPresent(duper) != null) return;
-                if (!isPlayer || !damager.hasPermission(Permissions.BYPASS_COOLDOWN.get())) {
-                    dupersOnCooldown.put(duper, PRESENT);
-                }
+                if (dupersOnCooldown.contains(damager.getUniqueId())) return;
+                if (!isPlayer || !damager.hasPermission(Permissions.BYPASS_COOLDOWN.get()))
+                    dupersOnCooldown.add(damager.getUniqueId());
             }
 
             if (blacklistEnabled && (!isPlayer || !damager.hasPermission(Permissions.BYPASS_BLACKLIST.get()))) {
                 if (blacklist.contains(itemInItemFrame.getType())) return;
-                if (blacklistCheckBundles && BundleUtil.isBundle(itemInItemFrame)) {
-                    for (ItemStack bundleItem : BundleUtil.getItems(itemInItemFrame)) {
-                        if (bundleItem != null && blacklist.contains(bundleItem.getType())) return;
-                    }
-                }
-                if (blacklistCheckShulkers && ShulkerUtil.isShulkerBox(itemInItemFrame)) {
-                    for (ItemStack shulkerItem : ShulkerUtil.getItems(itemInItemFrame)) {
+                if (blacklistCheckInsideItems) {
+                    Iterable<ItemStack> storedItems = ItemUtil.getStoredItems(itemInItemFrame);
+                    if (storedItems == null) return;
+                    for (ItemStack shulkerItem : storedItems) {
                         if (shulkerItem == null) continue;
                         if (blacklist.contains(shulkerItem.getType())) return;
-                        if (blacklistCheckBundles && BundleUtil.isBundle(shulkerItem)) {
-                            for (ItemStack bundleItem : BundleUtil.getItems(shulkerItem)) {
-                                if (bundleItem != null && blacklist.contains(bundleItem.getType())) return;
-                            }
+                        Iterable<ItemStack> nested = ItemUtil.getStoredItems(itemInItemFrame);
+                        if (nested == null) continue;
+                        for (ItemStack nestedItem : nested) {
+                            if (nestedItem != null && blacklist.contains(nestedItem.getType())) return;
                         }
                     }
                 }
@@ -156,19 +146,16 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
 
             if (whitelistEnabled && (!isPlayer || !damager.hasPermission(Permissions.BYPASS_WHITELIST.get()))) {
                 if (!whitelist.contains(itemInItemFrame.getType())) return;
-                if (whitelistCheckBundles && BundleUtil.isBundle(itemInItemFrame)) {
-                    for (ItemStack bundleItem : BundleUtil.getItems(itemInItemFrame)) {
-                        if (bundleItem != null && !whitelist.contains(bundleItem.getType())) return;
-                    }
-                }
-                if (whitelistCheckShulkers && ShulkerUtil.isShulkerBox(itemInItemFrame)) {
-                    for (ItemStack shulkerItem : ShulkerUtil.getItems(itemInItemFrame)) {
+                if (whitelistCheckInsideItems) {
+                    Iterable<ItemStack> storedItems = ItemUtil.getStoredItems(itemInItemFrame);
+                    if (storedItems == null) return;
+                    for (ItemStack shulkerItem : storedItems) {
                         if (shulkerItem == null) continue;
                         if (!whitelist.contains(shulkerItem.getType())) return;
-                        if (whitelistCheckBundles && BundleUtil.isBundle(shulkerItem)) {
-                            for (ItemStack bundleItem : BundleUtil.getItems(shulkerItem)) {
-                                if (bundleItem != null && !whitelist.contains(bundleItem.getType())) return;
-                            }
+                        Iterable<ItemStack> nested = ItemUtil.getStoredItems(itemInItemFrame);
+                        if (nested == null) continue;
+                        for (ItemStack nestedItem : nested) {
+                            if (nestedItem != null && !whitelist.contains(nestedItem.getType())) return;
                         }
                     }
                 }
@@ -176,9 +163,9 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
 
             // Adjust drop location so the item doesn't glitch into the block behind the frame
             Location dropLoc = itemFrame.getLocation().getBlock().getRelative(itemFrame.getFacing()).getLocation().clone();
-            dropLoc.setX(dropLoc.getX() + 0.5);
-            dropLoc.setY(dropLoc.getY() - 0.2);
-            dropLoc.setZ(dropLoc.getZ() + 0.5);
+            dropLoc.setX(dropLoc.getBlockX() + 0.5);
+            dropLoc.setY(dropLoc.getBlockY() + 0.5);
+            dropLoc.setZ(dropLoc.getBlockZ() + 0.5);
 
             if (!isFolia) {
                 itemFrame.getWorld().dropItemNaturally(dropLoc, itemInItemFrame);

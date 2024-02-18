@@ -4,7 +4,7 @@ description: '${project.description}'
 website: '${project.url}'
 main: me.MrRafter.framedupe.FrameDupe
 api-version: 1.13
-authors: [ MrRafter, xGinko ]
+authors: [ xGinko, MrRafter ]
 folia-supported: true
 
 commands:

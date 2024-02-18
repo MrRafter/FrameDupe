@@ -1,25 +1,26 @@
 package me.MrRafter.framedupe;
 
-import com.cryptomorin.xseries.XMaterial;
-import com.cryptomorin.xseries.XTag;
 import com.tcoded.folialib.FoliaLib;
 import me.MrRafter.framedupe.commands.FrameDupeCommand;
 import me.MrRafter.framedupe.modules.FrameDupeModule;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Random;
 import java.util.logging.Logger;
 
 public final class FrameDupe extends JavaPlugin {
 
     private static FrameDupe instance;
-    private static FrameConfig config;
+    private static DupeConfig config;
     private static Logger logger;
+    private static Random random;
 
     @Override
     public void onEnable() {
         logger = getLogger();
         instance = this;
+        random = new Random();
 
         // Check if plugin can be enabled in the first place
         try {
@@ -41,9 +42,9 @@ public final class FrameDupe extends JavaPlugin {
         logger.info("        FrameDupe        ");
         logger.info("                         ");
 
-        logger.info("Loading config");
+        logger.info("Loading Config");
         reloadConfiguration();
-        logger.info("Registering commands");
+        logger.info("Registering Commands");
         getCommand("framedupe").setExecutor(new FrameDupeCommand());
         logger.info("Loading Metrics");
         new Metrics(this, 17434);
@@ -56,8 +57,11 @@ public final class FrameDupe extends JavaPlugin {
     public static FoliaLib getFoliaLib() {
         return new FoliaLib(instance);
     }
-    public static FrameConfig getConfiguration() {
+    public static DupeConfig getConfiguration() {
         return config;
+    }
+    public static Random getRandom() {
+        return random;
     }
     public static Logger getPrefixedLogger() {
         return logger;
@@ -65,24 +69,12 @@ public final class FrameDupe extends JavaPlugin {
 
     public void reloadConfiguration() {
         try {
-            config = new FrameConfig();
+            config = new DupeConfig();
             FrameDupeModule.reloadModules();
             config.saveConfig();
         } catch (Exception e) {
             logger.severe("Error loading config! - " + e.getLocalizedMessage());
             e.printStackTrace();
         }
-    }
-
-    public static boolean serverHasShulkers() {
-        return XTag.SHULKER_BOXES.getValues().stream().anyMatch(XMaterial::isSupported);
-    }
-
-    public static boolean serverHasGlowItemFrames() {
-        return XMaterial.GLOW_ITEM_FRAME.isSupported();
-    }
-
-    public static boolean serverHasBundles() {
-        return XMaterial.BUNDLE.isSupported();
     }
 }

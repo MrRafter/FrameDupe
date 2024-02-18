@@ -6,15 +6,15 @@ import io.github.thatsmusic99.configurationmaster.api.Title;
 import java.io.File;
 import java.util.List;
 
-public final class FrameConfig {
+public final class DupeConfig {
 
     private final ConfigFile config;
 
-    FrameConfig() throws Exception {
+    DupeConfig() throws Exception {
         // Create plugin folder first if it does not exist yet
         File pluginFolder = FrameDupe.getInstance().getDataFolder();
         if (!pluginFolder.exists() && !pluginFolder.mkdir())
-            FrameDupe.getPrefixedLogger().severe("Failed to create plugin folder.");
+            FrameDupe.getPrefixedLogger().severe("Failed to create config folder.");
         // Load config.yml with ConfigMaster
         this.config = ConfigFile.loadConfig(new File(pluginFolder, "config.yml"));
         // Set title with credits
