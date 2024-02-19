@@ -1,5 +1,6 @@
 package me.MrRafter.framedupe.utils;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.inventory.InventoryHolder;
@@ -46,16 +47,24 @@ public class ItemUtil {
      *  @param itemStack ItemStack with potential items inside
      *  @return true if an item is inside that matches one of the materials in the set
      */
-    public static boolean containsOfMaterial(ItemStack itemStack, Set<Material> materials) {
+    public static boolean containsFromSet(ItemStack itemStack, Set<Material> materials) {
         Iterable<ItemStack> storedItems = getStoredItems(itemStack);
         if (storedItems == null) return false;
 
         for (final ItemStack item : storedItems) {
             if (item != null) {
-                return materials.contains(item.getType()) || containsOfMaterial(item, materials);
+                return materials.contains(item.getType()) || containsFromSet(item, materials);
             }
         }
 
         return false;
+    }
+
+    public static Location getDropLocation(Location frameLocation) {
+        Location dropLoc = frameLocation.clone();
+        dropLoc.setX(dropLoc.getBlockX() + 0.5);
+        dropLoc.setY(dropLoc.getBlockY() + 0.5);
+        dropLoc.setZ(dropLoc.getBlockZ() + 0.5);
+        return dropLoc;
     }
 }

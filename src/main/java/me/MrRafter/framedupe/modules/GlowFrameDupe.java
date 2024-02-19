@@ -5,9 +5,8 @@ import com.tcoded.folialib.impl.ServerImplementation;
 import me.MrRafter.framedupe.DupeConfig;
 import me.MrRafter.framedupe.FrameDupe;
 import me.MrRafter.framedupe.enums.Permissions;
-import me.MrRafter.framedupe.utils.ItemUtil;
 import me.MrRafter.framedupe.utils.ExpiringSet;
-import org.bukkit.Location;
+import me.MrRafter.framedupe.utils.ItemUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -126,23 +125,19 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
 
             if (blacklistEnabled && (!isPlayer || !damager.hasPermission(Permissions.BYPASS_BLACKLIST.get()))) {
                 if (blacklist.contains(itemInItemFrame.getType())) return;
-                if (blacklistCheckInsideItems && ItemUtil.containsOfMaterial(itemInItemFrame, blacklist)) return;
+                if (blacklistCheckInsideItems && ItemUtil.containsFromSet(itemInItemFrame, blacklist)) return;
             }
 
             if (whitelistEnabled && (!isPlayer || !damager.hasPermission(Permissions.BYPASS_WHITELIST.get()))) {
                 if (!whitelist.contains(itemInItemFrame.getType())) return;
-                if (whitelistCheckInsideItems && !ItemUtil.containsOfMaterial(itemInItemFrame, whitelist)) return;
+                if (whitelistCheckInsideItems && !ItemUtil.containsFromSet(itemInItemFrame, whitelist)) return;
             }
 
-            Location dropLoc = itemFrame.getLocation().getBlock().getRelative(itemFrame.getFacing()).getLocation().clone();
-            dropLoc.setX(dropLoc.getBlockX() + 0.5);
-            dropLoc.setY(dropLoc.getBlockY() + 0.5);
-            dropLoc.setZ(dropLoc.getBlockZ() + 0.5);
-
             if (!isFolia) {
-                itemFrame.getWorld().dropItemNaturally(dropLoc, itemInItemFrame);
+                itemFrame.getWorld().dropItem(ItemUtil.getDropLocation(itemFrame.getLocation()), itemInItemFrame);
             } else {
-                scheduler.runAtEntity(itemFrame, dropAdditional -> itemFrame.getWorld().dropItemNaturally(dropLoc, itemInItemFrame));
+                scheduler.runAtEntity(itemFrame, dropAdditional ->
+                        itemFrame.getWorld().dropItem(ItemUtil.getDropLocation(itemFrame.getLocation()), itemInItemFrame));
             }
         }
     }
