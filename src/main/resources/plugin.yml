@@ -3,7 +3,6 @@ version: '${project.version}'
 description: '${project.description}'
 website: '${project.url}'
 main: me.MrRafter.framedupe.FrameDupe
-api-version: 1.13
 authors: [ xGinko, MrRafter ]
 folia-supported: true
 
