@@ -1,9 +1,12 @@
 package me.MrRafter.framedupe.utils;
 
+import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
+
+import java.util.Set;
 
 public class ItemUtil {
 
@@ -34,5 +37,18 @@ public class ItemUtil {
         }
 
         return null;
+    }
+
+    public static boolean containsOfMaterial(ItemStack itemStack, Set<Material> materials) {
+        Iterable<ItemStack> storedItems = getStoredItems(itemStack);
+        if (storedItems == null) return false;
+
+        for (final ItemStack item : storedItems) {
+            if (item != null) {
+                return materials.contains(item.getType()) || containsOfMaterial(item, materials);
+            }
+        }
+
+        return false;
     }
 }

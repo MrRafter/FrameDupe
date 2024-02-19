@@ -5,8 +5,8 @@ import com.tcoded.folialib.impl.ServerImplementation;
 import me.MrRafter.framedupe.DupeConfig;
 import me.MrRafter.framedupe.FrameDupe;
 import me.MrRafter.framedupe.enums.Permissions;
-import me.MrRafter.framedupe.utils.ItemUtil;
 import me.MrRafter.framedupe.utils.ExpiringSet;
+import me.MrRafter.framedupe.utils.ItemUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -129,36 +129,12 @@ public class NormalFrameDupe implements FrameDupeModule, Listener {
 
             if (blacklistEnabled && (!isPlayer || !damager.hasPermission(Permissions.BYPASS_BLACKLIST.get()))) {
                 if (blacklist.contains(itemInItemFrame.getType())) return;
-                if (blacklistCheckInsideItems) {
-                    Iterable<ItemStack> storedItems = ItemUtil.getStoredItems(itemInItemFrame);
-                    if (storedItems == null) return;
-                    for (ItemStack shulkerItem : storedItems) {
-                        if (shulkerItem == null) continue;
-                        if (blacklist.contains(shulkerItem.getType())) return;
-                        Iterable<ItemStack> nested = ItemUtil.getStoredItems(itemInItemFrame);
-                        if (nested == null) continue;
-                        for (ItemStack nestedItem : nested) {
-                            if (nestedItem != null && blacklist.contains(nestedItem.getType())) return;
-                        }
-                    }
-                }
+                if (blacklistCheckInsideItems && ItemUtil.containsOfMaterial(itemInItemFrame, blacklist)) return;
             }
 
             if (whitelistEnabled && (!isPlayer || !damager.hasPermission(Permissions.BYPASS_WHITELIST.get()))) {
                 if (!whitelist.contains(itemInItemFrame.getType())) return;
-                if (whitelistCheckInsideItems) {
-                    Iterable<ItemStack> storedItems = ItemUtil.getStoredItems(itemInItemFrame);
-                    if (storedItems == null) return;
-                    for (ItemStack shulkerItem : storedItems) {
-                        if (shulkerItem == null) continue;
-                        if (!whitelist.contains(shulkerItem.getType())) return;
-                        Iterable<ItemStack> nested = ItemUtil.getStoredItems(itemInItemFrame);
-                        if (nested == null) continue;
-                        for (ItemStack nestedItem : nested) {
-                            if (nestedItem != null && !whitelist.contains(nestedItem.getType())) return;
-                        }
-                    }
-                }
+                if (whitelistCheckInsideItems && !ItemUtil.containsOfMaterial(itemInItemFrame, whitelist)) return;
             }
 
             // Adjust drop location so the item doesn't glitch into the block behind the frame

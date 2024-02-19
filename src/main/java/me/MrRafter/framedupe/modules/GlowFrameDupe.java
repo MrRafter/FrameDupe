@@ -126,36 +126,12 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
 
             if (blacklistEnabled && (!isPlayer || !damager.hasPermission(Permissions.BYPASS_BLACKLIST.get()))) {
                 if (blacklist.contains(itemInItemFrame.getType())) return;
-                if (blacklistCheckInsideItems) {
-                    Iterable<ItemStack> storedItems = ItemUtil.getStoredItems(itemInItemFrame);
-                    if (storedItems == null) return;
-                    for (ItemStack shulkerItem : storedItems) {
-                        if (shulkerItem == null) continue;
-                        if (blacklist.contains(shulkerItem.getType())) return;
-                        Iterable<ItemStack> nested = ItemUtil.getStoredItems(itemInItemFrame);
-                        if (nested == null) continue;
-                        for (ItemStack nestedItem : nested) {
-                            if (nestedItem != null && blacklist.contains(nestedItem.getType())) return;
-                        }
-                    }
-                }
+                if (blacklistCheckInsideItems && ItemUtil.containsOfMaterial(itemInItemFrame, blacklist)) return;
             }
 
             if (whitelistEnabled && (!isPlayer || !damager.hasPermission(Permissions.BYPASS_WHITELIST.get()))) {
                 if (!whitelist.contains(itemInItemFrame.getType())) return;
-                if (whitelistCheckInsideItems) {
-                    Iterable<ItemStack> storedItems = ItemUtil.getStoredItems(itemInItemFrame);
-                    if (storedItems == null) return;
-                    for (ItemStack shulkerItem : storedItems) {
-                        if (shulkerItem == null) continue;
-                        if (!whitelist.contains(shulkerItem.getType())) return;
-                        Iterable<ItemStack> nested = ItemUtil.getStoredItems(itemInItemFrame);
-                        if (nested == null) continue;
-                        for (ItemStack nestedItem : nested) {
-                            if (nestedItem != null && !whitelist.contains(nestedItem.getType())) return;
-                        }
-                    }
-                }
+                if (whitelistCheckInsideItems && !ItemUtil.containsOfMaterial(itemInItemFrame, whitelist)) return;
             }
 
             Location dropLoc = itemFrame.getLocation().getBlock().getRelative(itemFrame.getFacing()).getLocation().clone();
