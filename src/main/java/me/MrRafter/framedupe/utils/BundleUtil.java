@@ -23,7 +23,7 @@ public class BundleUtil {
     /**
      *  Gets the content of a Bundle if indeed a bundle.
      *
-     *  @param itemStack bundle with items inside
+     *  @param itemStack Bundle with potential items inside
      *  @return An Iterable of ItemStacks that are inside the Bundle or null if not a Bundle
      */
     @SuppressWarnings("UnstableApiUsage")

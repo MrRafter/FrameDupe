@@ -14,7 +14,7 @@ public class ItemUtil {
      *  Returns the content stored inside the passed ItemStack or null if there are no stored items.
      *  Elements inside the returned Iterable can be null.
      *
-     *  @param itemStack an itemstack with potential items inside
+     *  @param itemStack ItemStack with potential items inside
      *  @return An Iterable of ItemStacks that are inside the passed ItemStack or null
      */
     public static Iterable<ItemStack> getStoredItems(ItemStack itemStack) {
@@ -39,6 +39,13 @@ public class ItemUtil {
         return null;
     }
 
+    /**
+     *  Returns true if the ItemStack is a storage item that contains one or more of the
+     *  Materials from the set.
+     *
+     *  @param itemStack ItemStack with potential items inside
+     *  @return true if an item is inside that matches one of the materials in the set
+     */
     public static boolean containsOfMaterial(ItemStack itemStack, Set<Material> materials) {
         Iterable<ItemStack> storedItems = getStoredItems(itemStack);
         if (storedItems == null) return false;
