@@ -15,6 +15,7 @@ public final class FrameDupe extends JavaPlugin {
     private static DupeConfig config;
     private static Logger logger;
     private static Random random;
+    private static Metrics metrics;
 
     @Override
     public void onEnable() {
@@ -47,8 +48,21 @@ public final class FrameDupe extends JavaPlugin {
         logger.info("Registering Commands");
         getCommand("framedupe").setExecutor(new FrameDupeCommand());
         logger.info("Loading Metrics");
-        new Metrics(this, 17434);
+        metrics = new Metrics(this, 17434);
         logger.info("Done.");
+    }
+
+    @Override
+    public void onDisable() {
+        FrameDupeModule.modules.forEach(FrameDupeModule::disable);
+        FrameDupeModule.modules.clear();
+        if (metrics != null) {
+            metrics.shutdown();
+            metrics = null;
+        }
+        instance = null;
+        logger = null;
+        random = null;
     }
 
     public static FrameDupe getInstance() {
@@ -74,7 +88,7 @@ public final class FrameDupe extends JavaPlugin {
             config.saveConfig();
         } catch (Exception e) {
             logger.severe("Error loading config! - " + e.getLocalizedMessage());
-            e.printStackTrace();
+            logger.throwing("DupeConfig", "reloadConfiguration", e);
         }
     }
 }
