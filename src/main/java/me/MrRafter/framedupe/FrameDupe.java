@@ -13,14 +13,16 @@ public final class FrameDupe extends JavaPlugin {
 
     private static FrameDupe instance;
     private static DupeConfig config;
+    private static FoliaLib foliaLib;
     private static Logger logger;
     private static Random random;
     private static Metrics metrics;
 
     @Override
     public void onEnable() {
-        logger = getLogger();
         instance = this;
+        foliaLib = new FoliaLib(this);
+        logger = getLogger();
         random = new Random();
 
         // Check if plugin can be enabled in the first place
@@ -56,20 +58,24 @@ public final class FrameDupe extends JavaPlugin {
     public void onDisable() {
         FrameDupeModule.modules.forEach(FrameDupeModule::disable);
         FrameDupeModule.modules.clear();
+        if (foliaLib != null) {
+            foliaLib.getImpl().cancelAllTasks();
+            foliaLib = null;
+        }
         if (metrics != null) {
             metrics.shutdown();
             metrics = null;
         }
-        instance = null;
-        logger = null;
         random = null;
+        logger = null;
+        instance = null;
     }
 
     public static FrameDupe getInstance() {
         return instance;
     }
     public static FoliaLib getFoliaLib() {
-        return new FoliaLib(instance);
+        return foliaLib;
     }
     public static DupeConfig getConfiguration() {
         return config;
