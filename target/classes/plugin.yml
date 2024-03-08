@@ -1,8 +1,0 @@
-name: FrameDupe
-version: 1.6
-main: me.MrRafter.FrameDupe
-author: MrRafter
-description: FrameDupe For All Versions Of Minecraft
-commands:
-  framedupe:
-    aliases: [fd]
