@@ -33,7 +33,6 @@ public final class FrameDupe extends JavaPlugin {
         logger = getLogger();
         random = new Random();
         scheduling = new MorePaperLib(this).scheduling();
-        metrics = new Metrics(this, 17434);
 
         logger.info("                         ");
         logger.info("           /*\\           ");

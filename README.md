@@ -1,7 +1,5 @@
-[![FrameDupe](https://bstats.org/signatures/bukkit/FrameDupe.svg)](https://bstats.org/plugin/bukkit/FrameDupe/17434)
-
 ## Duplicate ItemStacks when they are removed from an Item Frame.</h3>
-<h3>Compatible with versions 1.7 - 1.20.
+<h3>Compatible with versions 1.7 - 1.21
 
 ### Features:
  - Configurable duplication chance
