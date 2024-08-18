@@ -1,4 +1,4 @@
-package me.MrRafter.framedupe.commands;
+package me.xginko.framedupe.commands;
 
 import org.bukkit.command.CommandSender;
 

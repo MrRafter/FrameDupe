@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>me.MrRafter</groupId>
+    <groupId>me.xginko</groupId>
     <artifactId>FrameDupe</artifactId>
-    <version>2.0.0</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>FrameDupe</name>
-    <description>Plugin that allows for items to be duplicated when removing them from an item frame.</description>
-    <url>https://github.com/MrRafter/FrameDupe</url>
+    <description>Plugin that duplicates items when removed from an item frame.</description>
+    <url>https://github.com/xGinko/FrameDupe</url>
 
     <properties>
         <java.version>1.8</java.version>
@@ -44,15 +44,15 @@
                             <relocations>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
-                                    <shadedPattern>me.MrRafter.framedupe.shaded.bstats</shadedPattern>
+                                    <shadedPattern>me.xginko.framedupe.shaded.bstats</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.tcoded.folialib</pattern>
-                                    <shadedPattern>me.MrRafter.framedupe.shaded.folialib</shadedPattern>
+                                    <shadedPattern>me.xginko.framedupe.shaded.folialib</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.github.benmanes.caffeine</pattern>
-                                    <shadedPattern>me.MrRafter.framedupe.shaded.caffeine</shadedPattern>
+                                    <shadedPattern>me.xginko.framedupe.shaded.caffeine</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
@@ -78,8 +78,8 @@
             <url>https://ci.pluginwiki.us/plugin/repository/everything/</url>
         </repository>
         <repository>
-            <id>folialib-repo</id>
-            <url>https://nexuslite.gcnt.net/repos/other/</url>
+            <id>morepaperlib-repo</id>
+            <url>https://mvn-repo.arim.space/lesser-gpl3/</url>
         </repository>
     </repositories>
 
@@ -87,7 +87,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20.4-R0.1-SNAPSHOT</version>
+            <version>1.21-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- yml config management -->
@@ -97,12 +97,11 @@
             <version>v2.0.0-rc.1</version>
             <scope>compile</scope>
         </dependency>
-        <!-- Support for Folia -->
+        <!-- Folia Support -->
         <dependency>
-            <groupId>com.tcoded</groupId>
-            <artifactId>FoliaLib</artifactId>
-            <version>0.3.1</version>
-            <scope>compile</scope>
+            <groupId>space.arim.morepaperlib</groupId>
+            <artifactId>morepaperlib</artifactId>
+            <version>0.4.3</version>
         </dependency>
         <!-- This needs to be a lower version to remain compatible with Java 8 -->
         <dependency>

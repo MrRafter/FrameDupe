@@ -1,9 +1,9 @@
-package me.MrRafter.framedupe.commands.subcommands;
+package me.xginko.framedupe.commands.subcommands;
 
 
-import me.MrRafter.framedupe.FrameDupe;
-import me.MrRafter.framedupe.commands.SubCommand;
-import me.MrRafter.framedupe.enums.Permissions;
+import me.xginko.framedupe.FrameDupe;
+import me.xginko.framedupe.commands.SubCommand;
+import me.xginko.framedupe.enums.PluginPermission;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -25,7 +25,7 @@ public class VersionSubCmd extends SubCommand {
 
     @Override
     public void perform(CommandSender sender, String[] args) {
-        if (sender.hasPermission(Permissions.CMD_VERSION.get())) {
+        if (sender.hasPermission(PluginPermission.CMD_VERSION.get())) {
             final PluginDescriptionFile pluginyml = FrameDupe.getInstance().getDescription();
             sender.sendMessage("\n");
             sender.sendMessage(

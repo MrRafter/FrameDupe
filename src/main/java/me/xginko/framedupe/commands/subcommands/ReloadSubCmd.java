@@ -1,8 +1,8 @@
-package me.MrRafter.framedupe.commands.subcommands;
+package me.xginko.framedupe.commands.subcommands;
 
-import me.MrRafter.framedupe.FrameDupe;
-import me.MrRafter.framedupe.commands.SubCommand;
-import me.MrRafter.framedupe.enums.Permissions;
+import me.xginko.framedupe.FrameDupe;
+import me.xginko.framedupe.commands.SubCommand;
+import me.xginko.framedupe.enums.PluginPermission;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -23,9 +23,9 @@ public class ReloadSubCmd extends SubCommand {
 
     @Override
     public void perform(CommandSender sender, String[] args) {
-        if (sender.hasPermission(Permissions.CMD_RELOAD.get())) {
+        if (sender.hasPermission(PluginPermission.CMD_RELOAD.get())) {
             sender.sendMessage(ChatColor.WHITE + "Reloading FrameDupe config...");
-            FrameDupe.getFoliaLib().getImpl().runAsync(reload -> {
+            FrameDupe.scheduling().asyncScheduler().run(() -> {
                 FrameDupe.getInstance().reloadConfiguration();
                 sender.sendMessage(ChatColor.GREEN + "Reload complete.");
             });

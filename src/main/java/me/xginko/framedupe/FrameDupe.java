@@ -1,10 +1,12 @@
-package me.MrRafter.framedupe;
+package me.xginko.framedupe;
 
-import com.tcoded.folialib.FoliaLib;
-import me.MrRafter.framedupe.commands.FrameDupeCommand;
-import me.MrRafter.framedupe.modules.FrameDupeModule;
+import me.xginko.framedupe.commands.FrameDupeCommand;
+import me.xginko.framedupe.enums.PluginPermission;
+import me.xginko.framedupe.modules.FrameDupeModule;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
+import space.arim.morepaperlib.MorePaperLib;
+import space.arim.morepaperlib.scheduling.GracefulScheduling;
 
 import java.util.Random;
 import java.util.logging.Logger;
@@ -12,29 +14,27 @@ import java.util.logging.Logger;
 public final class FrameDupe extends JavaPlugin {
 
     private static FrameDupe instance;
+    private static GracefulScheduling scheduling;
     private static DupeConfig config;
-    private static FoliaLib foliaLib;
     private static Logger logger;
     private static Random random;
     private static Metrics metrics;
 
     @Override
     public void onEnable() {
-        instance = this;
-        foliaLib = new FoliaLib(this);
-        logger = getLogger();
-        random = new Random();
-
         // Check if plugin can be enabled in the first place
-        try {
-            Class.forName("org.bukkit.entity.ItemFrame");
-        } catch (ClassNotFoundException e) {
+        if (!hasClass("org.bukkit.entity.ItemFrame")) {
             logger.severe("Your server does not have item frames. Plugin cannot enable.");
-            getServer().getPluginManager().disablePlugin(instance);
+            getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-        // Enable
+        instance = this;
+        logger = getLogger();
+        random = new Random();
+        scheduling = new MorePaperLib(this).scheduling();
+        metrics = new Metrics(this, 17434);
+
         logger.info("                         ");
         logger.info("           /*\\           ");
         logger.info("      ┏━━━━━━━━━━━┓      ");
@@ -47,20 +47,23 @@ public final class FrameDupe extends JavaPlugin {
 
         logger.info("Loading Config");
         reloadConfiguration();
-        logger.info("Registering Commands");
+
+        logger.info("Registering Permissions");
+        PluginPermission.registerAll();
+
+        logger.info("Registering Command");
         getCommand("framedupe").setExecutor(new FrameDupeCommand());
-        logger.info("Loading Metrics");
-        metrics = new Metrics(this, 17434);
+
         logger.info("Done.");
     }
 
     @Override
     public void onDisable() {
-        FrameDupeModule.modules.forEach(FrameDupeModule::disable);
-        FrameDupeModule.modules.clear();
-        if (foliaLib != null) {
-            foliaLib.getImpl().cancelAllTasks();
-            foliaLib = null;
+        FrameDupeModule.MODULES.forEach(FrameDupeModule::disable);
+        FrameDupeModule.MODULES.clear();
+        if (scheduling != null) {
+            scheduling.cancelGlobalTasks();
+            scheduling = null;
         }
         if (metrics != null) {
             metrics.shutdown();
@@ -74,16 +77,20 @@ public final class FrameDupe extends JavaPlugin {
     public static FrameDupe getInstance() {
         return instance;
     }
-    public static FoliaLib getFoliaLib() {
-        return foliaLib;
+
+    public static GracefulScheduling scheduling() {
+        return scheduling;
     }
-    public static DupeConfig getConfiguration() {
+
+    public static DupeConfig config() {
         return config;
     }
-    public static Random getRandom() {
+
+    public static Random random() {
         return random;
     }
-    public static Logger getPrefixedLogger() {
+
+    public static Logger logger() {
         return logger;
     }
 
@@ -95,6 +102,15 @@ public final class FrameDupe extends JavaPlugin {
         } catch (Exception e) {
             logger.severe("Error loading config! - " + e.getLocalizedMessage());
             logger.throwing("DupeConfig", "reloadConfiguration", e);
+        }
+    }
+
+    public static boolean hasClass(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
         }
     }
 }

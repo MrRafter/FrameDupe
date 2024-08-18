@@ -1,12 +1,10 @@
-package me.MrRafter.framedupe.modules;
+package me.xginko.framedupe.modules;
 
-import com.tcoded.folialib.FoliaLib;
-import com.tcoded.folialib.impl.ServerImplementation;
-import me.MrRafter.framedupe.DupeConfig;
-import me.MrRafter.framedupe.FrameDupe;
-import me.MrRafter.framedupe.enums.Permissions;
-import me.MrRafter.framedupe.utils.ExpiringSet;
-import me.MrRafter.framedupe.utils.ItemUtil;
+import me.xginko.framedupe.DupeConfig;
+import me.xginko.framedupe.FrameDupe;
+import me.xginko.framedupe.enums.PluginPermission;
+import me.xginko.framedupe.utils.ExpiringSet;
+import me.xginko.framedupe.utils.ItemUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -19,33 +17,33 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class GlowFrameDupe implements FrameDupeModule, Listener {
+public class GlowFrameDupe extends FrameDupeModule implements Listener {
 
-    private final ServerImplementation scheduler;
     private final ExpiringSet<UUID> dupersOnCooldown;
     private final Set<Material> blacklist, whitelist;
     private EntityType GLOW_ITEM_FRAME;
     private final double probability;
-    private final boolean isFolia, cooldownEnabled,
-            blacklistEnabled, blacklistCheckInsideItems,
-            whitelistEnabled, whitelistCheckInsideItems;
+    private final boolean cooldownEnabled, blacklistEnabled, blacklistCheckInsideItems, whitelistEnabled,
+            whitelistCheckInsideItems;
 
     protected GlowFrameDupe() {
         shouldEnable(); // make enable option appear on top
-        final FoliaLib foliaLib = FrameDupe.getFoliaLib();
-        this.isFolia = foliaLib.isFolia();
-        this.scheduler = isFolia ? foliaLib.getImpl() : null;
         try { this.GLOW_ITEM_FRAME = EntityType.valueOf("GLOW_ITEM_FRAME"); } catch (IllegalArgumentException ignored) {}
-        DupeConfig config = FrameDupe.getConfiguration();
+        DupeConfig config = FrameDupe.config();
         config.master().addSection("GLOW_FrameDupe", "Glow Frame Dupe");
         config.master().addComment("GLOW_FrameDupe.Enabled",
-                "Enable duping with glow item frames. (Will only enable if your game version has them)");
+                "Enable duping with glow item frames. (Will only enable if your game has them)");
         this.probability = config.getDouble("GLOW_FrameDupe.Probability-Percentage", 50.0,
                 "50.0 = 50%. Has to be greater than 0.") / 100;
-        if (probability <= 0) FrameDupe.getPrefixedLogger().warning("Probability percentage is 0 or lower. Not enabling glow frame dupe.");
+        if (probability <= 0)
+            FrameDupe.logger().warning("Probability percentage is 0 or lower. Not enabling glow frame dupe.");
         this.cooldownEnabled = config.getBoolean("GLOW_FrameDupe.Cooldown.Enabled", true);
         this.dupersOnCooldown = cooldownEnabled ? new ExpiringSet<>(Duration.ofMillis(
                 Math.max(config.getInt("GLOW_FrameDupe.Cooldown.Ticks", 15, "1 sec = 20 ticks"), 1) * 50L
@@ -58,13 +56,13 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
                     try {
                         return Material.valueOf(configuredItem);
                     } catch (IllegalArgumentException e) {
-                        FrameDupe.getPrefixedLogger().warning("Configured item '"+configuredItem+"' was not recognized. " +
+                        FrameDupe.logger().warning("Configured item '"+configuredItem+"' was not recognized. " +
                                 "Please use the correct Material enums for your server version.");
                         return null;
                     }
                 })
                 .filter(Objects::nonNull)
-                .collect(Collectors.toCollection(HashSet::new));
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(Material.class)));
         this.whitelistEnabled = config.getBoolean("GLOW_FrameDupe.Whitelist.Enabled", false);
         this.whitelistCheckInsideItems = config.getBoolean("GLOW_FrameDupe.Whitelist.Check-Inside-Items", true);
         this.whitelist = config.getList("GLOW_FrameDupe.Whitelist.Items", Collections.singletonList("DIAMOND"))
@@ -73,18 +71,18 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
                     try {
                         return Material.valueOf(configuredItem);
                     } catch (IllegalArgumentException e) {
-                        FrameDupe.getPrefixedLogger().warning("Configured item '"+configuredItem+"' was not recognized. " +
+                        FrameDupe.logger().warning("Configured item '"+configuredItem+"' was not recognized. " +
                                 "Please use the correct Material enums for your server version.");
                         return null;
                     }
                 })
                 .filter(Objects::nonNull)
-                .collect(Collectors.toCollection(HashSet::new));
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(Material.class)));
     }
 
     @Override
     public boolean shouldEnable() {
-        return FrameDupe.getConfiguration().getBoolean("GLOW_FrameDupe.Enabled", GLOW_ITEM_FRAME != null)
+        return FrameDupe.config().getBoolean("GLOW_FrameDupe.Enabled", GLOW_ITEM_FRAME != null)
                 && GLOW_ITEM_FRAME != null && probability > 0;
     }
 
@@ -99,46 +97,41 @@ public class GlowFrameDupe implements FrameDupeModule, Listener {
         HandlerList.unregisterAll(this);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onFramePunch(EntityDamageByEntityEvent event) {
-        final Entity damaged = event.getEntity();
-        if (damaged == null || !damaged.getType().equals(GLOW_ITEM_FRAME)) return;
-        final Entity damager = event.getDamager();
+        Entity damaged = event.getEntity();
+        if (damaged == null || damaged.getType() != GLOW_ITEM_FRAME) return;
+        Entity damager = event.getDamager();
         if (damager == null) return;
 
-        final boolean isPlayer = damager.getType().equals(EntityType.PLAYER);
+        boolean isPlayer = damager.getType() == EntityType.PLAYER;
 
         if (
                 probability >= 100
-                || FrameDupe.getRandom().nextDouble() <= probability
-                || (isPlayer && damager.hasPermission(Permissions.BYPASS_CHANCE.get()))
+                || FrameDupe.random().nextDouble() <= probability
+                || (isPlayer && damager.hasPermission(PluginPermission.BYPASS_CHANCE.get()))
         ) {
-            final ItemFrame itemFrame = (ItemFrame) damaged;
-            final ItemStack itemInItemFrame = itemFrame.getItem();
-            if (itemInItemFrame == null || itemInItemFrame.getType().equals(Material.AIR)) return;
+            ItemStack itemInItemFrame = ((ItemFrame) damaged).getItem();
+            if (itemInItemFrame == null || itemInItemFrame.getType() == Material.AIR) return;
 
             if (cooldownEnabled) {
                 if (dupersOnCooldown.contains(damager.getUniqueId())) return;
-                if (!isPlayer || !damager.hasPermission(Permissions.BYPASS_COOLDOWN.get()))
+                if (!isPlayer || !damager.hasPermission(PluginPermission.BYPASS_COOLDOWN.get()))
                     dupersOnCooldown.add(damager.getUniqueId());
             }
 
-            if (blacklistEnabled && (!isPlayer || !damager.hasPermission(Permissions.BYPASS_BLACKLIST.get()))) {
+            if (blacklistEnabled && (!isPlayer || !damager.hasPermission(PluginPermission.BYPASS_BLACKLIST.get()))) {
                 if (blacklist.contains(itemInItemFrame.getType())) return;
                 if (blacklistCheckInsideItems && ItemUtil.containsAny(itemInItemFrame, blacklist)) return;
             }
 
-            if (whitelistEnabled && (!isPlayer || !damager.hasPermission(Permissions.BYPASS_WHITELIST.get()))) {
+            if (whitelistEnabled && (!isPlayer || !damager.hasPermission(PluginPermission.BYPASS_WHITELIST.get()))) {
                 if (!whitelist.contains(itemInItemFrame.getType())) return;
                 if (whitelistCheckInsideItems && !ItemUtil.containsAny(itemInItemFrame, whitelist)) return;
             }
 
-            if (!isFolia) {
-                itemFrame.getWorld().dropItem(ItemUtil.toCenterLocation(itemFrame.getLocation()), itemInItemFrame);
-            } else {
-                scheduler.runAtEntity(itemFrame, dropAdditional ->
-                        itemFrame.getWorld().dropItem(ItemUtil.toCenterLocation(itemFrame.getLocation()), itemInItemFrame));
-            }
+            FrameDupe.scheduling().entitySpecificScheduler(damaged).run(() ->
+                    damaged.getWorld().dropItem(ItemUtil.toCenterLocation(damaged.getLocation()), itemInItemFrame), null);
         }
     }
 }

@@ -1,4 +1,4 @@
-package me.MrRafter.framedupe;
+package me.xginko.framedupe;
 
 import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
 import io.github.thatsmusic99.configurationmaster.api.Title;
@@ -14,7 +14,7 @@ public final class DupeConfig {
         // Create plugin folder first if it does not exist yet
         File pluginFolder = FrameDupe.getInstance().getDataFolder();
         if (!pluginFolder.exists() && !pluginFolder.mkdir())
-            FrameDupe.getPrefixedLogger().severe("Failed to create config folder.");
+            FrameDupe.logger().severe("Failed to create config folder.");
         // Load config.yml with ConfigMaster
         this.config = ConfigFile.loadConfig(new File(pluginFolder, "config.yml"));
         // Set title with credits
@@ -35,7 +35,7 @@ public final class DupeConfig {
         try {
             this.config.save();
         } catch (Exception e) {
-            FrameDupe.getPrefixedLogger().severe("Failed to save config file! - " + e.getLocalizedMessage());
+            FrameDupe.logger().severe("Failed to save config file! - " + e.getLocalizedMessage());
         }
     }
 

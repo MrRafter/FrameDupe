@@ -1,7 +1,7 @@
-package me.MrRafter.framedupe.commands;
+package me.xginko.framedupe.commands;
 
-import me.MrRafter.framedupe.commands.subcommands.ReloadSubCmd;
-import me.MrRafter.framedupe.commands.subcommands.VersionSubCmd;
+import me.xginko.framedupe.commands.subcommands.ReloadSubCmd;
+import me.xginko.framedupe.commands.subcommands.VersionSubCmd;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
