@@ -3,7 +3,6 @@ package me.xginko.framedupe.commands.subcommands;
 import me.xginko.framedupe.FrameDupe;
 import me.xginko.framedupe.commands.SubCommand;
 import me.xginko.framedupe.enums.PluginPermission;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 public class ReloadSubCmd extends SubCommand {
@@ -23,14 +22,15 @@ public class ReloadSubCmd extends SubCommand {
 
     @Override
     public void perform(CommandSender sender, String[] args) {
-        if (sender.hasPermission(PluginPermission.CMD_RELOAD.get())) {
-            sender.sendMessage(ChatColor.WHITE + "Reloading FrameDupe config...");
-            FrameDupe.scheduling().asyncScheduler().run(() -> {
-                FrameDupe.getInstance().reloadConfiguration();
-                sender.sendMessage(ChatColor.GREEN + "Reload complete.");
-            });
-        } else {
-            sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+        if (!sender.hasPermission(PluginPermission.CMD_RELOAD.get())) {
+            sender.sendMessage("You don't have permission to use this command.");
+            return;
         }
+
+        sender.sendMessage("Reloading FrameDupe config...");
+        FrameDupe.scheduling().asyncScheduler().run(() -> {
+            FrameDupe.getInstance().reloadConfiguration();
+            sender.sendMessage("Reload complete.");
+        });
     }
 }

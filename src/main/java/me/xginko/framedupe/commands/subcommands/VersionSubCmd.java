@@ -4,7 +4,6 @@ package me.xginko.framedupe.commands.subcommands;
 import me.xginko.framedupe.FrameDupe;
 import me.xginko.framedupe.commands.SubCommand;
 import me.xginko.framedupe.enums.PluginPermission;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginDescriptionFile;
 
@@ -25,17 +24,16 @@ public class VersionSubCmd extends SubCommand {
 
     @Override
     public void perform(CommandSender sender, String[] args) {
-        if (sender.hasPermission(PluginPermission.CMD_VERSION.get())) {
-            final PluginDescriptionFile pluginyml = FrameDupe.getInstance().getDescription();
-            sender.sendMessage("\n");
-            sender.sendMessage(
-                    ChatColor.GOLD+pluginyml.getName()+" "+pluginyml.getVersion()+
-                    ChatColor.GRAY+" by "+ChatColor.DARK_AQUA+pluginyml.getAuthors().get(0)+
-                    ChatColor.GRAY+" & "+ChatColor.DARK_AQUA+pluginyml.getAuthors().get(1)
-            );
-            sender.sendMessage("\n");
-        } else {
-            sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+        if (!sender.hasPermission(PluginPermission.CMD_VERSION.get())) {
+            sender.sendMessage("You don't have permission to use this command.");
+            return;
         }
+
+        PluginDescriptionFile pluginyml = FrameDupe.getInstance().getDescription();
+
+        sender.sendMessage("\n");
+        sender.sendMessage(pluginyml.getName()+" "+pluginyml.getVersion() +
+                " by "+ String.join(", ", pluginyml.getAuthors()));
+        sender.sendMessage("\n");
     }
 }

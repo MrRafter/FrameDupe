@@ -3,7 +3,6 @@ package me.xginko.framedupe;
 import me.xginko.framedupe.commands.FrameDupeCommand;
 import me.xginko.framedupe.enums.PluginPermission;
 import me.xginko.framedupe.modules.FrameDupeModule;
-import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 import space.arim.morepaperlib.MorePaperLib;
 import space.arim.morepaperlib.scheduling.GracefulScheduling;
@@ -18,7 +17,6 @@ public final class FrameDupe extends JavaPlugin {
     private static DupeConfig config;
     private static Logger logger;
     private static Random random;
-    private static Metrics metrics;
 
     @Override
     public void onEnable() {
@@ -63,10 +61,6 @@ public final class FrameDupe extends JavaPlugin {
         if (scheduling != null) {
             scheduling.cancelGlobalTasks();
             scheduling = null;
-        }
-        if (metrics != null) {
-            metrics.shutdown();
-            metrics = null;
         }
         random = null;
         logger = null;

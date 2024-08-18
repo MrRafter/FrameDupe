@@ -2,7 +2,6 @@ package me.xginko.framedupe.commands;
 
 import me.xginko.framedupe.commands.subcommands.ReloadSubCmd;
 import me.xginko.framedupe.commands.subcommands.VersionSubCmd;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -48,12 +47,10 @@ public class FrameDupeCommand implements TabCompleter, CommandExecutor {
 
     private void sendCommandOverview(CommandSender sender) {
         if (!sender.hasPermission("framedupe.cmd.*")) return;
-        sender.sendMessage(ChatColor.GRAY+"-----------------------------------------------------");
-        sender.sendMessage(ChatColor.WHITE+"FrameDupe Commands");
-        sender.sendMessage(ChatColor.GRAY+"-----------------------------------------------------");
-        subCommands.forEach(cmd ->
-            sender.sendMessage(ChatColor.WHITE + cmd.getSyntax() + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + cmd.getDescription())
-        );
-        sender.sendMessage(ChatColor.GRAY+"-----------------------------------------------------");
+        sender.sendMessage("-----------------------------------------------------");
+        sender.sendMessage("FrameDupe Commands");
+        sender.sendMessage("-----------------------------------------------------");
+        subCommands.forEach(cmd -> sender.sendMessage(cmd.getSyntax() + " - " + cmd.getDescription()));
+        sender.sendMessage("-----------------------------------------------------");
     }
 }
