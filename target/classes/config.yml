@@ -1,0 +1,49 @@
+# Frame dupe from 1.7.x to last update of minecraft
+# made by mrrafter_ on discord
+
+#The probability of the item getting duped once the item frame is hit.
+#100 and above means that every item will get duped. 0 will effectively disable this Module.
+#If this is at 100% it will break the economy of your server it is recommended to set it to 50% or less
+
+#this enables duplication with a typical item frame (will work on all versions higher than 1.7.x)
+FrameDupe:
+  Enabled: true
+  Probability-percentage: 100
+
+  # If this is enabled, shulkers that have items you don't want to duplicate cancel the duplication
+  # Only works if Whitelist or Blacklist is enabled (will only work from version 1.9 and later)
+  Fix-Shulkers: true
+
+  # All items in this list will not be duplicated if the Enabled option is set to true
+  Blacklist:
+    Enabled: false
+    Items:
+      - DIAMOND
+
+  # Only items in this list will be duplicated if the Enabled option is set to true
+  Whitelist:
+    Enabled: false
+    Items:
+      - STICK
+
+
+#this allows duplication with a glow item frame (will only work from version 1.17 and later)
+GLOW_FrameDupe:
+  Enabled: true
+  Probability-percentage: 100
+
+  # If this is enabled, shulkers that have items you don't want to duplicate cancel the duplication
+  # Only works if Whitelist or Blacklist is enabled
+  Fix-Shulkers: true
+
+  # All items in this list will not be duplicated if the Enabled option is set to true
+  Blacklist:
+    Enabled: false
+    Items:
+      - DIAMOND
+
+  # Only items in this list will be duplicated if the Enabled option is set to true
+  Whitelist:
+    Enabled: false
+    Items:
+      - STICK
