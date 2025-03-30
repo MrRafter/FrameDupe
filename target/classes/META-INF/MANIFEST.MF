@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Class-Path: joml-1.10.8.jar failureaccess-1.0.2.jar jsr305-3.0.2.jar che
+ cker-qual-3.33.0.jar paperlib-1.0.8.jar snakeyaml-2.2.jar listenablefut
+ ure-9999.0-empty-to-avoid-conflict-with-guava.jar spigot-api-1.21.4-R0.
+ 1-20250309.223819-46.jar j2objc-annotations-3.0.0.jar bungeecord-chat-1
+ .20-R0.2.jar error_prone_annotations-2.28.0.jar guava-33.3.1-jre.jar gs
+ on-2.11.0.jar
+
