@@ -1,0 +1,9 @@
+name: FrameDupe
+version: 1.7.3
+main: me.MrRafter.FrameDupe
+author: MrRafter
+description: FrameDupe For All Versions Of Minecraft
+folia-supported: true
+commands:
+  framedupe:
+    aliases: [fd]
